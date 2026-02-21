@@ -1,0 +1,20 @@
+' =====================================================
+' DIAGRAMA DE CONTENEDORES - OPCION 1
+' =====================================================
+@startuml Container
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(coordinador, "Coordinador", "Coordinador de algun programa de pregrado de la FIET")
+Person(docente, "Docente", "Docente de algun programa de pregrado de la FIET")
+Person(estudiante, "Estudiante", "Estudiante de algun programa de pregrado de la FIET en proceso de proyecto de grado")
+
+System_Boundary(s1, "Aplicación Web de seguimiento de proyectos de grado") {
+Container(monolito, "Aplicacion monolita", "Java Desktop Swing", "Aplicación que contiene tanto el frontend como el backend")
+ContainerDb(db, "Base de Datos", "PostgreSQL", "Almacena la información del sistema")
+}
+Rel(coordinador, monolito, "Usa")
+Rel(docente, monolito, "Usa")
+Rel(estudiante, monolito, "Usa")
+Rel(monolito, db, "Lee/Escribe", "JDBC")
+@enduml

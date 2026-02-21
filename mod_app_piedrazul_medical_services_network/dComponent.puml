@@ -1,0 +1,18 @@
+@startuml ComponentDiagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_TOP_DOWN()
+
+Container_Boundary(monolith, "Aplicacion monolitica", "Java Desktop Swing\nAplicación que contiene tanto el frontend como el backend") {
+
+    Component(presentation, "Presentation", "Java Swing", "Vistas que interactuan con el usuario")
+
+    Component(domain, "Domain", "Java", "Entidades y servicios del negocio")
+
+    Component(access, "Access", "Java", "Capa de acceso a Datos")
+
+    Rel(presentation, domain, "Llama")
+    Rel(domain, access, "Usa")
+}
+
+@enduml

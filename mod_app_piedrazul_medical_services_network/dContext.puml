@@ -1,0 +1,28 @@
+@startuml Context
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+' =====================================================
+' DIAGRAMA DE CONTEXTO
+' =====================================================
+
+Person(coordinador, "Coordinador", "Coordinador de algun programa de pregrado de la FIET")
+Person(docente, "Docente", "Docente de algun programa de pregrado de la FIET")
+Person(estudiante, "Estudiante", "Estudiante de algun programa de pregrado de la FIET en proceso de proyecto de grado")
+Person(jefe, "Jefe de dpto", "Jefe de departamento")
+Person(secretario, "Secretaria", "Secretario de la FIET")
+
+System_Boundary(s1, "Proyectos de Grado") {
+    System(app, "Aplicación Web de seguimiento de proyectos de grado", "Permite a los usuarios llevar el ciclo completo de los trabajos de grado")
+}
+
+System_Ext(email, "Sistema de correo electronico", "Servicio externo que envia correos")
+
+Rel(coordinador, app, "Usa")
+Rel(docente, app, "Usa")
+Rel(estudiante, app, "Usa")
+Rel(jefe, app, "Usa")
+Rel(secretario, app, "Usa")
+Rel(app, email, "Envía correos", "SMTP")
+
+@enduml

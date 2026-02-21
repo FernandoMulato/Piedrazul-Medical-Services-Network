@@ -1,0 +1,71 @@
+' =====================================================
+' DIAGRAMA DE CLASES
+' =====================================================
+@startuml ClassDiagram
+
+package "domain.entities" {
+
+class User {
+    -email: String
+    -password: String
+}
+
+class Role {
+    -role: String
+}
+
+class Person {
+    -firstName: String
+    -lastName: String
+    -celular: String
+    -dni: String
+}
+
+class Professor {
+    -area: String
+}
+
+class Student {
+    -program: Enum
+    -group: Enum
+}
+
+class DepartmentHead {
+    -department: Enum
+}
+
+class Coordinator
+
+class Secretary
+
+class Project {
+    -title: String
+    -date: Date
+    -state: State
+}
+
+class Documents {
+    -id: String
+}
+
+' =====================
+' HERENCIA
+' =====================
+
+Professor --|> Person
+Coordinator --|> Person
+DepartmentHead --|> Person
+Student --|> Person
+Secretary --|> Person
+
+' =====================
+' RELACIONES
+' =====================
+
+Project o--> Documents : has
+User o--> Role : has
+Person --> User : has
+
+}
+
+@enduml
