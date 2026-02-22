@@ -5,16 +5,23 @@
 
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-Person(coordinador, "Coordinador", "Coordinador de algun programa de pregrado de la FIET")
-Person(docente, "Docente", "Docente de algun programa de pregrado de la FIET")
-Person(estudiante, "Estudiante", "Estudiante de algun programa de pregrado de la FIET en proceso de proyecto de grado")
+' =====================================================
+' USUARIOS DEL SISTEMA
+' =====================================================
 
-System_Boundary(s1, "Aplicación Web de seguimiento de proyectos de grado") {
-Container(monolito, "Aplicacion monolita", "Java Desktop Swing", "Aplicación que contiene tanto el frontend como el backend")
-ContainerDb(db, "Base de Datos", "PostgreSQL", "Almacena la información del sistema")
+Person(paciente, "Paciente", "Usuario que solicita y consulta citas médicas y revisa su historial clinico")
+Person(admin, "Administrador", "Usuario responsable de gestionar usuarios, auditorias y configuraciones del sistema")
+Person(medico, "Medico/Terapista", "Profesional de salud que gestiona citas medicas y registra información clinica")
+
+System_Boundary(s1, "Sistema Piedra Azul") {
+    Container(app, "Aplicacion de escritorio", "Java + Swing (JFrame)", "Permite la gestion de usuarios, citas medicas e historiales clinicos. Contiene la interfaz grafica, logica de negocio y acceso a datos.")
+    ContainerDb(db, "Base de Datos", "SQLite", "Almacena usuarios, citas medicas, historiales clinicos, registros de auditoria y demas informacion del sistema.")
 }
-Rel(coordinador, monolito, "Usa")
-Rel(docente, monolito, "Usa")
-Rel(estudiante, monolito, "Usa")
-Rel(monolito, db, "Lee/Escribe", "JDBC")
+Rel(paciente, app, "Solicita y consulta citas medicas", "Interfaz grafica (JFrame)")
+
+Rel(admin, app, "Administra usuarios y configuraciones", "Interfaz grafica (JFrame)")
+
+Rel(medico, app, "Registra informacion clínica y gestiona citas", "Interfaz grafica (JFrame)")
+
+Rel(app, db, "Lee/Escribe", "JDBC")
 @enduml
