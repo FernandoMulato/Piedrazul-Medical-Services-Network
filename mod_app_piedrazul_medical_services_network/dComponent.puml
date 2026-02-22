@@ -3,16 +3,35 @@
 
 LAYOUT_TOP_DOWN()
 
-Container_Boundary(monolith, "Aplicacion monolitica", "Java Desktop Swing\nAplicación que contiene tanto el frontend como el backend") {
+Container_Boundary(app, "Aplicacion de escritorio Java") {
 
-    Component(presentation, "Presentation", "Java Swing", "Vistas que interactuan con el usuario")
+    Component(ui, "Interfaz de usuario", "JFrame/Swing", "Gestiona la interaccion con los usuarios y captura eventos del sistema")
 
-    Component(domain, "Domain", "Java", "Entidades y servicios del negocio")
+    Component(servicioUsuarios, "Servicio de usuarios", "Java", "Contiene la logica de negocio para registro, autenticacion y administracion de usuarios")
 
-    Component(access, "Access", "Java", "Capa de acceso a Datos")
+    Component(servicioCitas, "Servicio de citas medicas", "Java", "Implementa la logica de negocio para crear, modificar y consultar citas medicas")
 
-    Rel(presentation, domain, "Llama")
-    Rel(domain, access, "Usa")
+    Component(servicioReportes, "Servicio de reportes y auditorias", "Java", "Genera reportes y estadisticas a partir de la informacion almacenada")
+
+    Component(repoUsuarios, "Repositorio de usuarios", "JDBC", "Gestiona el acceso y persistencia de datos relacionados con los usuarios")
+
+    Component(repoCitas, "Repositorio de citas", "JDBC", "Gestiona el acceso y persistencia de datos relacionados con las citas medicas")
+
+    Component(repoReportes, "Repositorio de reportes", "JDBC", "Realiza consultas especializadas para la generacion de reportes y auditorias")
+
+    ComponentDb(db, "Base de datos", "SQLite", "Almacena la informacion persistente del sistema")
 }
+
+Rel(ui, servicioUsuarios, "Solicita operaciones de gestion de usuarios")
+Rel(ui, servicioCitas, "Solicita operaciones de gestion de citas")
+Rel(ui, servicioReportes, "Solicita generacion de reportes")
+
+Rel(servicioUsuarios, repoUsuarios, "Solicita acceso a datos de usuarios")
+Rel(servicioCitas, repoCitas, "Solicita acceso a datos de citas")
+Rel(servicioReportes, repoReportes, "Solicita consultas para reportes")
+
+Rel(repoUsuarios, db, "Lee y escribe datos", "JDBC")
+Rel(repoCitas, db, "Lee y escribe datos", "JDBC")
+Rel(repoReportes, db, "Ejecuta consultas especializadas", "JDBC")
 
 @enduml
