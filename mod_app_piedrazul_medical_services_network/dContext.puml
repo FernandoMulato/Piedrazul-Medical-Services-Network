@@ -1,28 +1,25 @@
 @startuml Context
-
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
-' =====================================================
-' DIAGRAMA DE CONTEXTO
-' =====================================================
+title Sistema de Agendamiento de Citas Médicas - Nivel 1 (Contexto)
 
-Person(coordinador, "Coordinador", "Coordinador de algun programa de pregrado de la FIET")
-Person(docente, "Docente", "Docente de algun programa de pregrado de la FIET")
-Person(estudiante, "Estudiante", "Estudiante de algun programa de pregrado de la FIET en proceso de proyecto de grado")
-Person(jefe, "Jefe de dpto", "Jefe de departamento")
-Person(secretario, "Secretaria", "Secretario de la FIET")
+Person(paciente, "Paciente", "Agenda y consulta sus citas médicas")
 
-System_Boundary(s1, "Proyectos de Grado") {
-    System(app, "Aplicación Web de seguimiento de proyectos de grado", "Permite a los usuarios llevar el ciclo completo de los trabajos de grado")
-}
+Person(medico, "Médico / Terapista", "Gestiona agenda y registra historia clínica")
 
-System_Ext(email, "Sistema de correo electronico", "Servicio externo que envia correos")
+Person(agendador, "Agendador de Citas", "Funcionario que agenda manualmente")
 
-Rel(coordinador, app, "Usa")
-Rel(docente, app, "Usa")
-Rel(estudiante, app, "Usa")
-Rel(jefe, app, "Usa")
-Rel(secretario, app, "Usa")
-Rel(app, email, "Envía correos", "SMTP")
+Person(admin, "Administrador", "Gestiona usuarios, médicos y reportes")
+
+System(sistema, "Sistema de Agendamiento de Citas Médicas (Aplicación de Escritorio)", "Aplicación monolítica en capas (MVC) para gestión de citas e historias clínicas")
+
+System_Ext(email, "Servicio de Correo Electrónico", "Servicio externo para envío de notificaciones")
+
+Rel(paciente, sistema, "Agenda y consulta citas")
+Rel(medico, sistema, "Gestiona agenda y registra historia clínica")
+Rel(agendador, sistema, "Registra y reprograma citas")
+Rel(admin, sistema, "Administra el sistema")
+
+Rel(sistema, email, "Envía notificaciones", "SMTP")
 
 @enduml
