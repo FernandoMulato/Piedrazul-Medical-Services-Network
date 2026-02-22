@@ -2,27 +2,32 @@
 
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
+title Diagrama de Contexto - Piedra Azul
+
 ' =====================================================
-' DIAGRAMA DE CONTEXTO
+' USUARIOS DEL SISTEMA
 ' =====================================================
 
-Person(coordinador, "Coordinador", "Coordinador de algun programa de pregrado de la FIET")
-Person(docente, "Docente", "Docente de algun programa de pregrado de la FIET")
-Person(estudiante, "Estudiante", "Estudiante de algun programa de pregrado de la FIET en proceso de proyecto de grado")
-Person(jefe, "Jefe de dpto", "Jefe de departamento")
-Person(secretario, "Secretaria", "Secretario de la FIET")
+Person(paciente, "Paciente", "Usuario que solicita y consulta citas médicas y revisa su historial clinico")
 
-System_Boundary(s1, "Proyectos de Grado") {
-    System(app, "Aplicación Web de seguimiento de proyectos de grado", "Permite a los usuarios llevar el ciclo completo de los trabajos de grado")
-}
+Person(admin, "Administrador", "Usuario responsable de gestionar usuarios, auditorias y configuraciones del sistema")
 
-System_Ext(email, "Sistema de correo electronico", "Servicio externo que envia correos")
+Person(medico, "Medico/Terapista", "Profesional de salud que gestiona citas medicas y registra información clinica")
 
-Rel(coordinador, app, "Usa")
-Rel(docente, app, "Usa")
-Rel(estudiante, app, "Usa")
-Rel(jefe, app, "Usa")
-Rel(secretario, app, "Usa")
-Rel(app, email, "Envía correos", "SMTP")
+' =====================================================
+' SISTEMA PRINCIPAL
+' =====================================================
+
+System(aplicacion, "Piedra Azul", "Aplicacion de escritorio desarrollada en Java que permite la gestion de citas medicas e historiales clinicos")
+
+' =====================================================
+' RELACIONES
+' =====================================================
+
+Rel(paciente, aplicacion, "Solicita y consulta citas medicas", "Interfaz grafica (JFrame)")
+
+Rel(admin, aplicacion, "Administra usuarios y configuraciones", "Interfaz grafica (JFrame)")
+
+Rel(medico, aplicacion, "Registra informacion clínica y gestiona citas", "Interfaz grafica (JFrame)")
 
 @enduml
