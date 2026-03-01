@@ -1,0 +1,9 @@
+@startuml PresentationPackages
+
+package "presentation" {
+  package "views" {}
+  package "controller" {}
+}
+
+views ..> controller
+@enduml

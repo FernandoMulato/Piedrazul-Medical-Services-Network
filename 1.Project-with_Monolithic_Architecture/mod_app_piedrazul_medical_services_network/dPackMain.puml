@@ -1,0 +1,24 @@
+@startuml PackagesDiagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
+
+
+package "com.piedrazul.agendamiento." as piedrazul {
+  package "presentation" {
+  }
+  package "application" {
+  }
+  package "domain" {
+  }
+  package "infrastructure" {
+  }
+}
+
+presentation ..> application
+
+application ..> domain
+
+application ..> infrastructure
+
+infrastructure ..> domain
+
+@enduml

@@ -1,0 +1,87 @@
+@startuml ClassesDomain
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
+
+abstract User <<abstract>> #Pink;line:Black;line.dotted;text:gray {
+  # id: long 
+  # username: String
+  # fullname: String
+  # password: String
+  # role: Role
+  # state: State
+  ' <<Constructor>> +User(): void 
+}
+
+class Patient <<entity>> #LightYellow;line:Black;text:Black extends User {
+  - citizenshipCard: long
+  - phoneNumber: String
+  ' <<Constructor>> +User(): void 
+} 
+
+abstract ClinicalStaff <<abstract>> #Pink;line:Black;line.dotted;text:gray extends User {
+  # profession: Profession
+  # specialty: Specialty
+}
+
+class Medic <<entity>> #LightYellow;line:Black;text:Black extends ClinicalStaff {}
+
+class Therapist <<entity>> #LightYellow;line:Black;text:Black extends ClinicalStaff {}
+
+class AppointmentManager <<entity>> #LightYellow;line:Black;text:Black extends User {}
+
+class Administrator <<entity>> #LightYellow;line:Black;text:Black extends User {}
+
+class Appointment <<entity>> #LightYellow;line:Black;text:Black {
+  -id: long
+  -citizenshipCardPatient: long
+  -phoneNumberPatient: String
+  -medicalStaffId: long
+  -dateAndTime: Date 
+  -attentionType: AttentionType
+}
+
+enum Role <<enumeration>> #LightBlue;line:Black;text:Black {
+  Administrator
+  Patient
+  ClinicalStaff
+  AppointmentManager
+}
+
+enum Profession <<enumeration>> #LightBlue;line:Black;text:Black {
+  Medic
+  Therapist 
+}
+
+enum Specialty <<enumeration>> #LightBlue;line:Black;text:Black {
+  Neural therapy
+  Chiropractic
+  Physiotherapy
+}
+
+enum State <<enumeration>> #LightBlue;line:Black;text:Black {
+  Activate
+  Inactivate
+}
+
+enum AttentionType <<enumeration>> #LightBlue;line:Black;text:Black {
+  General
+  Specialized
+}
+
+User ..> Role
+User ..> State 
+
+ClinicalStaff ..> Profession
+ClinicalStaff ..> Specialty
+
+Appointment ..> AttentionType
+
+' UserController ..> User
+' UserController ..> IUserService
+
+' IUserService ..> User
+
+' UserService ..> User
+' UserService ..> IUserRepository
+
+@enduml

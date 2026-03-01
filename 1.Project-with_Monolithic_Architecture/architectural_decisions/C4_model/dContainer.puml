@@ -16,7 +16,6 @@ System_Boundary(s1, "Sistema de Agendamiento") {
 
 }
 
-System_Ext(email, "Servicio de Correo Electrónico", "SMTP")
 
 Rel(paciente, app, "Usa")
 Rel(medico, app, "Usa")
@@ -24,6 +23,6 @@ Rel(agendador, app, "Usa")
 Rel(admin, app, "Usa")
 
 Rel(app, db, "Lee/Escribe", "JDBC")
-Rel(app, email, "Envía notificaciones", "SMTP")
+
 
 @enduml
