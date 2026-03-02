@@ -1,0 +1,5 @@
+interface IUserRepository <<interface>> #aliceblue;line:blue;text:blue {}
+      
+      class UserRepository <<repository>> #PaleGreen;line:Black;text:Black implements IUserRepository {
+
+      }

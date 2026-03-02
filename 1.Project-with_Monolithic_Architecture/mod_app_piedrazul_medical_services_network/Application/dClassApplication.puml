@@ -1,0 +1,4 @@
+interface IUserService <<interface>> #aliceblue;line:blue;text:blue {
+      }
+      class UserService <<service>> #PaleGreen;line:Black;text:Black implements IUserService {
+      }
