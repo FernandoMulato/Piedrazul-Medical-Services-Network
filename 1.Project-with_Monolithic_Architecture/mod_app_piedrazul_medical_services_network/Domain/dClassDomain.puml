@@ -53,7 +53,7 @@ enum Profession <<enumeration>> #LightBlue;line:Black;text:Black {
 }
 
 enum Specialty <<enumeration>> #LightBlue;line:Black;text:Black {
-  Neural therapy
+  NeuralTherapy
   Chiropractic
   Physiotherapy
 }
