@@ -1,0 +1,14 @@
+com\piedrazul\Domain\entities\ClsClinicalStaff.class
+com\piedrazul\App.class
+com\piedrazul\Domain\entities\ClsPatient.class
+com\piedrazul\Domain\enums\State.class
+com\piedrazul\Domain\entities\ClsMedic.class
+com\piedrazul\Domain\entities\ClsAppointmentManager.class
+com\piedrazul\Domain\entities\ClsAdministrator.class
+com\piedrazul\Domain\enums\Role.class
+com\piedrazul\Domain\enums\Specialty.class
+com\piedrazul\Domain\entities\ClsAppointment.class
+com\piedrazul\Domain\entities\ClsUser.class
+com\piedrazul\Domain\enums\Profession.class
+com\piedrazul\Domain\enums\AttentionType.class
+com\piedrazul\Domain\entities\ClsTherapist.class
