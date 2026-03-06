@@ -1,0 +1,23 @@
+@startuml PresentationClasses
+
+class UserController <<controller>> #PaleGreen;line:Black;text:Black {
+
+}
+
+' from domain layer
+abstract User<Domain Layer> <<abstract>> #Pink;line:Black;line.dotted;text:gray {
+  # id: long 
+  # username: String
+  # fullname: String
+  # password: String
+  # role: Role
+  # state: State
+}
+
+' from application layer
+interface IUserService<Application Layer> <<interface>> #aliceblue;line:blue;text:blue {}
+
+UserController ..> User
+UserController ..> IUserService
+
+@enduml
