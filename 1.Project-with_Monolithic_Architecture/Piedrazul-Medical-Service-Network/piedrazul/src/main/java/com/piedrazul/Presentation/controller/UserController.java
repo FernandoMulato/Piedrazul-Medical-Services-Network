@@ -6,14 +6,15 @@ import com.piedrazul.Domain.entities.ClsUser;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ClsUserController {
+public class UserController {
 
   private final IUserService userService;
 
-  public ClsUser createUser(ClsUser prmUser) {
+  public ClsUser opCreateUser(ClsUser prmUser) {
     // 1. Enviar al servicio de usuario
     // 2. Si no se pudo crear el usuario retorna excepción
     // 3. si se pudo crear el usuario de retorna el usuario
     return userService.opCreateUser(prmUser); 
   }
+
 }

@@ -5,5 +5,5 @@ package "presentation" {
   package "controller" {}
 }
 
-views ..> controller
+views <..> controller
 @enduml

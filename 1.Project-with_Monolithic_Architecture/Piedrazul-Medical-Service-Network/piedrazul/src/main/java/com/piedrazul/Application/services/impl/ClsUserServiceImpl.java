@@ -24,4 +24,9 @@ public class ClsUserServiceImpl implements IUserService {
     return null;
   }
 
+  @Override
+  public boolean opLogin(String prmUsername, String prmPassword) {
+    return true;
+  }
+
 }

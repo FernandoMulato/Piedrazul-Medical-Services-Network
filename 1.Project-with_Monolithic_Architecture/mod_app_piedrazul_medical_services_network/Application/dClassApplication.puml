@@ -3,6 +3,7 @@
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
 
 interface IUserService <<interface>> #aliceblue;line:blue;text:blue {}
+
 class UserService <<service>> #PaleGreen;line:Black;text:Black implements IUserService {}
 
 ' from domain layer
@@ -16,9 +17,7 @@ abstract User<Domain Layer> <<abstract>> #Pink;line:Black;line.dotted;text:gray 
 }
 
 ' from infrastructure layer
-interface IUserRepository<Infrastructure Layer> <<interface>> #aliceblue;line:blue;text:blue {
-
-}
+interface IUserRepository<Infrastructure Layer> <<interface>> #aliceblue;line:blue;text:blue {}
 
 IUserService ..> User
 UserService ..> User
