@@ -1,17 +1,27 @@
 package com.piedrazul;
 
-import java.sql.SQLException;
+import javax.swing.SwingUtilities;
 
-import com.piedrazul.Infrastructure.config.IDatabaseConnection;
-import com.piedrazul.Infrastructure.config.impl.SQLiteConnection;
+import com.piedrazul.Presentation.views.AdminPanelView;
+import com.piedrazul.Presentation.views.LoginView;
 
-/**
- * Hello world!
- *
- */
 public class App {
-  public static void main(String[] args) throws SQLException {
-    IDatabaseConnection databaseConnection = new SQLiteConnection();
-    databaseConnection.connect(); 
+
+  public static void main(String[] args) {
+
+    SwingUtilities.invokeLater(() -> {
+
+      LoginView loginView = new LoginView();
+      loginView.setVisible(true);
+
+    });
+
+    SwingUtilities.invokeLater(() -> {
+
+      AdminPanelView view = new AdminPanelView();
+      view.setVisible(true);
+
+    });
+
   }
 }
