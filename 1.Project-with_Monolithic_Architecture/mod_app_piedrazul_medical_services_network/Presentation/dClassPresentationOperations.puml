@@ -1,3 +1,13 @@
 @startuml PresentationOperationsClasses
 
+class UserController <<controller>> #PaleGreen;line:Black;text:Black {
+}
+
+class LoginController <<controller>> #PaleGreen;line:Black;text:Black {
+  -login(String username, String password): User
+}
+
+class AdminPanelController <<controller>> #PaleGreen;line:Black;text:Black {
+}
+
 @enduml
