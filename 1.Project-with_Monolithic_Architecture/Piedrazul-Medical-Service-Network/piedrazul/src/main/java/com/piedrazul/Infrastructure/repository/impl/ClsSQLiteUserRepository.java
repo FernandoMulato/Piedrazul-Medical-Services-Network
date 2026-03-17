@@ -92,7 +92,7 @@ public class ClsSQLiteUserRepository implements IUserRepository {
       String roleType = rs.getString("ROLE_TYPE");
       String stateType = rs.getString("STATE_TYPE");
 
-      if ("ACTIVE".equals(stateType) && "ADMINISTRATOR".equals(roleType)) {
+      if ("ACTIVE".equals(stateType)) {
         switch (roleType) {
           case "ADMINISTRATOR":
             return Role.Administrator;
@@ -103,6 +103,10 @@ public class ClsSQLiteUserRepository implements IUserRepository {
           case "APPOINTMENTMANAGER":
             return Role.AppointmentManager;
         }
+      } else {
+        // La excepción debe ser para un caso especifico (MODIFICAR)
+        throw new RuntimeException(
+            "Acceso denegado - Usuario BLOQUEADO");
       }
 
       return null;
