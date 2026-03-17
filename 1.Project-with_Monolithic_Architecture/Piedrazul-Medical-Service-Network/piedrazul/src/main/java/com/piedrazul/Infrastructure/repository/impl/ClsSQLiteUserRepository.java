@@ -93,13 +93,22 @@ public class ClsSQLiteUserRepository implements IUserRepository {
       String stateType = rs.getString("STATE_TYPE");
 
       if ("ACTIVE".equals(stateType) && "ADMINISTRATOR".equals(roleType)) {
-        return Role.Administrator;
+        switch (roleType) {
+          case "ADMINISTRATOR":
+            return Role.Administrator;
+          case "PATIENT":
+            return Role.Patient;
+          case "CLINICALSTAFF":
+            return Role.ClinicalStaff;
+          case "APPOINTMENTMANAGER":
+            return Role.AppointmentManager;
+        }
       }
 
       return null;
 
     } catch (SQLException e) {
-      throw new RuntimeException("Error verificando el usuario", e);
+      throw new RuntimeException("Error verificando el usuario. 500", e);
     }
   }
 }

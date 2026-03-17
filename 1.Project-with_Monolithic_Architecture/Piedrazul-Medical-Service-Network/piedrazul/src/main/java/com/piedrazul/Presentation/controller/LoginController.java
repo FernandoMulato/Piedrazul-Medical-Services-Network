@@ -23,22 +23,19 @@ public class LoginController {
     String username = loginView.getUsername();
     String password = loginView.getPassword();
 
-    Role roleUser = userService.opVerifyUser(username, password);
+    try {
+      Role roleUser = userService.opVerifyUser(username, password);
+      if (roleUser.equals(Role.Administrator)) {
+        loginView.dispose(); // cerrar login
 
-    if (roleUser == null) {
-      loginView.showMessage("Usuario o contraseña incorrectos");
+        AdminPanelView adminPanel = new AdminPanelView();
+        new AdminPanelController(adminPanel);
+
+        adminPanel.setVisible(true);
+      }
+    } catch (Exception e) {
+      loginView.showMessage(e.getMessage());
       return;
-    } 
-
-    if (roleUser.equals(Role.Administrator)) {
-      loginView.dispose(); // cerrar login
-
-      AdminPanelView adminPanel = new AdminPanelView();
-      new AdminPanelController(adminPanel);
-
-      adminPanel.setVisible(true);
     }
-
-    return;
   }
 }
