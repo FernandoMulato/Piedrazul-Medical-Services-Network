@@ -1,11 +1,11 @@
 @startuml ApplicationOperationsClasses
 
 interface IUserService <<interface>> #aliceblue;line:blue;text:blue {
-  +verifyLogin(String username, String password): User
+  +verifyLogin(String username, String password): Role
 }
 
 class UserService <<service>> #PaleGreen;line:Black;text:Black {
-  +verifyLogin(String username, String password): User
+  +verifyLogin(String username, String password): Role
 }
 
 @enduml

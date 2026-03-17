@@ -30,11 +30,20 @@ abstract User<Domain Layer> <<abstract>> #Pink;line:Black;line.dotted;text:gray 
 ' from application layer
 interface IUserService<Application Layer> <<interface>> #aliceblue;line:blue;text:blue {}
 
+' from domain layer
+enum Role<Domain Layer> <<enumeration>> #LightBlue;line:Black;text:Black {
+  Administrator
+  Patient
+  ClinicalStaff
+  AppointmentManager
+}
+
 UserController ..> User
 UserController ..> IUserService
 LoginView ..> LoginController
-LoginView ..> AdminPanelView
+LoginView <..> AdminPanelView
 AdminPanelView ..> AdminPanelController
 LoginController ..> IUserService
+LoginController ..> Role
 
 @enduml
