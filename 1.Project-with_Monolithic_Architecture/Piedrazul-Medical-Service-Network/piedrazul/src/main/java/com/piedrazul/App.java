@@ -16,18 +16,18 @@ public class App {
 
     SwingUtilities.invokeLater(() -> {
 
-      //LoginView loginView = new LoginView();
+      LoginView loginView = new LoginView();
 
-      //new LoginController(loginView);
+      new LoginController(loginView);
 
-      //loginView.setVisible(true);
+      loginView.setVisible(true);
 
-      SQLiteConnection dbConnection = new SQLiteConnection();
+      /*SQLiteConnection dbConnection = new SQLiteConnection();
       IAppointmentRepository appointmentRepository = new ClsAppointmentRepository(dbConnection);
 
       AppointmentView appointmentView = new AppointmentView();
       new AppointmentController(appointmentView, appointmentRepository);
-      appointmentView.setVisible(true);
+      appointmentView.setVisible(true);*/
 
     });
   }
