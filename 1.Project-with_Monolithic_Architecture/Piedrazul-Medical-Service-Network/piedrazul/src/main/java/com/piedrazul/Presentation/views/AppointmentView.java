@@ -15,10 +15,11 @@ public class AppointmentView extends JFrame {
     private JTextField txtReason;
     private JTextField txtAppointmentId;
     
-    private JButton btnAgendar;
-    private JButton btnReagendar;
-    private JButton btnExportar;
-    private JButton btnLimpiar;
+    private JButton btnSchedule;
+    private JButton btnReSchedule;
+    private JButton btnExport;
+    private JButton btnClear;
+    private JButton btnSearchAppointment;
 
     public AppointmentView() {
         setTitle("PiedraAzul - Agendamiento de Citas");
@@ -75,18 +76,18 @@ public class AppointmentView extends JFrame {
         JPanel panelButtonsSchedule = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelButtonsSchedule.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 30));
 
-        btnLimpiar = new JButton("Limpiar");
-        btnAgendar = new JButton("Agendar Cita");
-        btnExportar = new JButton("Exportar Citas");
+        btnClear = new JButton("Limpiar");
+        btnSchedule = new JButton("Agendar Cita");
+        btnExport = new JButton("Exportar Citas");
         
-        panelButtonsSchedule.add(btnLimpiar);
-        panelButtonsSchedule.add(btnAgendar);
+        panelButtonsSchedule.add(btnClear);
+        panelButtonsSchedule.add(btnSchedule);
 
         panelSchedule.add(panelButtonsSchedule, BorderLayout.SOUTH);
 
         tabMain.add(panelSchedule, "Agendar cita");
         
-        //  Panel reagendar citas
+        //  PANEL REAGENDAR CITAS
         JPanel panelReSchedule = new JPanel(new GridLayout(0, 2, 10, 15));
         panelReSchedule.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 30));
         
@@ -94,7 +95,7 @@ public class AppointmentView extends JFrame {
         txtAppointmentId = new JTextField();
         panelReSchedule.add(txtAppointmentId);
 
-        JButton btnSearchAppointment = new JButton("Buscar cita");
+        btnSearchAppointment = new JButton("Buscar cita");
         JTable tabScheduleInfo = new JTable();
         panelReSchedule.add(btnSearchAppointment);
         panelReSchedule.add(tabScheduleInfo);
@@ -109,12 +110,12 @@ public class AppointmentView extends JFrame {
         JPanel panelButtonsReSchedule = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelButtonsReSchedule.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 30));
 
-        btnLimpiar = new JButton("Limpiar");
-        btnReagendar = new JButton("Reagendar Cita");
-        btnExportar = new JButton("Exportar Citas");
+        btnClear = new JButton("Limpiar");
+        btnReSchedule = new JButton("Reagendar Cita");
+        btnExport = new JButton("Exportar Citas");
         
-        panelButtonsReSchedule.add(btnLimpiar);
-        panelButtonsReSchedule.add(btnReagendar);
+        panelButtonsReSchedule.add(btnClear);
+        panelButtonsReSchedule.add(btnReSchedule);
 
         panelReSchedule.add(panelButtonsReSchedule, BorderLayout.SOUTH);
 
@@ -183,20 +184,20 @@ public class AppointmentView extends JFrame {
 
     // ===== Listeners =====
 
-    public void addAgendarListener(ActionListener listener) {
-        btnAgendar.addActionListener(listener);
+    public void addScheduleListener(ActionListener listener) {
+        btnSchedule.addActionListener(listener);
     }
 
-    public void addReagendarListener(ActionListener listener) {
-        btnReagendar.addActionListener(listener);
+    public void addReScheduleListener(ActionListener listener) {
+        btnReSchedule.addActionListener(listener);
     }
 
-    public void addExportarListener(ActionListener listener) {
-        btnExportar.addActionListener(listener);
+    public void addExportListener(ActionListener listener) {
+        btnExport.addActionListener(listener);
     }
     
-    public void addLimpiarListener(ActionListener listener) {
-        btnLimpiar.addActionListener(listener);
+    public void addClearListener(ActionListener listener) {
+        btnClear.addActionListener(listener);
     }
 
     public void showDialog(String message) {

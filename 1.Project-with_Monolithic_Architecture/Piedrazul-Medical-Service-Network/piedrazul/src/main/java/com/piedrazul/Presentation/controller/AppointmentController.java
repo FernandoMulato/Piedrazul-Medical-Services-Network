@@ -19,13 +19,13 @@ public class AppointmentController {
     public AppointmentController(AppointmentView view, IAppointmentRepository repository) {  
         this.appointmentView = view;
         this.appointmentRepository = repository;
-        view.addAgendarListener(e -> fncAgendar());
-        view.addReagendarListener(e -> fncReagendar());
-        view.addExportarListener(e -> fncExportar());
-        view.addLimpiarListener(e -> fncLimpiar());
+        view.addScheduleListener(e -> opSchedule());
+        view.addReScheduleListener(e -> opReSchedule());
+        view.addExportListener(e -> opExport());
+        view.addClearListener(e -> opClear());
     }
 
-    private void fncAgendar() {
+    private void opSchedule() {
         try {
             if (appointmentView.getPatientID().trim().isEmpty()
                 || appointmentView.getPhoneNumber().trim().isEmpty()
@@ -64,7 +64,7 @@ public class AppointmentController {
 
             if (created != null && created.getAttId() > 0) {
                 appointmentView.showDialog("¡Cita agendada exitosamente! ID: " + created.getAttId());
-                fncLimpiar();
+                opClear();
             } else {
                 appointmentView.showDialog("Error: No se pudo guardar la cita.");
             }
@@ -76,7 +76,7 @@ public class AppointmentController {
         }
     }
 
-    private void fncReagendar() {
+    private void opReSchedule() {
         try {
             String appointmentIdStr = appointmentView.getAppointmentId();
             if (appointmentIdStr == null || appointmentIdStr.trim().isEmpty()) {
@@ -117,7 +117,7 @@ public class AppointmentController {
 
             if (updated) {
                 appointmentView.showDialog("¡Cita reagendada exitosamente! Estado: REAGENDADA");
-                fncLimpiar();
+                opClear();
             } else {
                 appointmentView.showDialog("Error: No se pudo reagendar la cita.");
             }
@@ -129,7 +129,7 @@ public class AppointmentController {
         }
     }
 
-    private void fncExportar() {
+    private void opExport() {
         try {
             List<ClsAppointment> appointments = appointmentRepository.opListAll();
 
@@ -166,7 +166,7 @@ public class AppointmentController {
         }
     }
     
-    private void fncLimpiar() {
+    private void opClear() {
         appointmentView.setAppointmentId(null);
         appointmentView.setPatientID(null);
         appointmentView.setPhoneNumber(null);
