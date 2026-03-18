@@ -11,14 +11,19 @@ public class AppointmentView extends JFrame {
     private JTextField txtPhoneNumber;
     private JTextField txtMedID;
     private JComboBox<String> cmbSpeciality;
-    private JSpinner dateTimeSpinner;
+    private JSpinner dateTimeSpinnerSchedule;
     private JTextField txtReason;
+
     private JTextField txtAppointmentId;
+    private JTable tabScheduleInfo;
+    private JSpinner dateTimeSpinnerReSchedule;
     
     private JButton btnSchedule;
     private JButton btnReSchedule;
-    private JButton btnExport;
-    private JButton btnClear;
+    private JButton btnExportSchedule;
+    private JButton btnExportReSchedule;
+    private JButton btnClearSchedule;
+    private JButton btnClearReSchedule;
     private JButton btnSearchAppointment;
 
     public AppointmentView() {
@@ -64,10 +69,10 @@ public class AppointmentView extends JFrame {
 
         panelSchedule.add(new JLabel("Fecha y Hora:"));
         SpinnerDateModel model = new SpinnerDateModel();
-        dateTimeSpinner = new JSpinner(model);
-        JSpinner.DateEditor editor = new JSpinner.DateEditor(dateTimeSpinner, "yyyy-MM-dd HH:mm");
-        dateTimeSpinner.setEditor(editor);
-        panelSchedule.add(dateTimeSpinner);
+        dateTimeSpinnerSchedule = new JSpinner(model);
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(dateTimeSpinnerSchedule, "yyyy-MM-dd HH:mm");
+        dateTimeSpinnerSchedule.setEditor(editor);
+        panelSchedule.add(dateTimeSpinnerSchedule);
 
         panelSchedule.add(new JLabel("Motivo de la cita:"));
         txtReason = new JTextField();
@@ -76,11 +81,11 @@ public class AppointmentView extends JFrame {
         JPanel panelButtonsSchedule = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelButtonsSchedule.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 30));
 
-        btnClear = new JButton("Limpiar");
+        btnClearSchedule = new JButton("Limpiar");
         btnSchedule = new JButton("Agendar Cita");
-        btnExport = new JButton("Exportar Citas");
+        btnExportSchedule = new JButton("Exportar Citas");
         
-        panelButtonsSchedule.add(btnClear);
+        panelButtonsSchedule.add(btnClearSchedule);
         panelButtonsSchedule.add(btnSchedule);
 
         panelSchedule.add(panelButtonsSchedule, BorderLayout.SOUTH);
@@ -96,25 +101,25 @@ public class AppointmentView extends JFrame {
         panelReSchedule.add(txtAppointmentId);
 
         btnSearchAppointment = new JButton("Buscar cita");
-        JTable tabScheduleInfo = new JTable();
+        tabScheduleInfo = new JTable();
         panelReSchedule.add(btnSearchAppointment);
-        panelReSchedule.add(tabScheduleInfo);
+        panelReSchedule.add(new JScrollPane(tabScheduleInfo));
 
         panelReSchedule.add(new JLabel("Fecha y Hora nueva para reagendar:"));
         SpinnerDateModel model2 = new SpinnerDateModel();
-        dateTimeSpinner = new JSpinner(model2);
-        JSpinner.DateEditor editor2 = new JSpinner.DateEditor(dateTimeSpinner, "yyyy-MM-dd HH:mm");
-        dateTimeSpinner.setEditor(editor2);
-        panelReSchedule.add(dateTimeSpinner);
+        dateTimeSpinnerReSchedule = new JSpinner(model2);
+        JSpinner.DateEditor editor2 = new JSpinner.DateEditor(dateTimeSpinnerReSchedule, "yyyy-MM-dd HH:mm");
+        dateTimeSpinnerReSchedule.setEditor(editor2);
+        panelReSchedule.add(dateTimeSpinnerReSchedule);
 
         JPanel panelButtonsReSchedule = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelButtonsReSchedule.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 30));
 
-        btnClear = new JButton("Limpiar");
+        btnClearReSchedule = new JButton("Limpiar");
         btnReSchedule = new JButton("Reagendar Cita");
-        btnExport = new JButton("Exportar Citas");
+        btnExportReSchedule = new JButton("Exportar Citas");
         
-        panelButtonsReSchedule.add(btnClear);
+        panelButtonsReSchedule.add(btnClearReSchedule);
         panelButtonsReSchedule.add(btnReSchedule);
 
         panelReSchedule.add(panelButtonsReSchedule, BorderLayout.SOUTH);
@@ -144,8 +149,12 @@ public class AppointmentView extends JFrame {
         return (String) cmbSpeciality.getSelectedItem();
     }
 
-    public Date getDate() {
-        return (Date) dateTimeSpinner.getValue();
+    public Date getScheduleDate() {
+        return (Date) dateTimeSpinnerSchedule.getValue();
+    }
+
+    public Date getReScheduleDate() {
+        return (Date) dateTimeSpinnerReSchedule.getValue();
     }
 
     public String getReason() {
@@ -174,12 +183,28 @@ public class AppointmentView extends JFrame {
         cmbSpeciality.setSelectedItem(speciality);
     }
 
-    public void setDate(Date date) {
-        dateTimeSpinner.setValue(date);
+    public void setScheduleDate(Date date) {
+        dateTimeSpinnerSchedule.setValue(date);
     }
 
+    public void setReScheduleDate(Date date) {
+        dateTimeSpinnerReSchedule.setValue(date);
+    }
+    
     public void setReason(String reason) {
         txtReason.setText(reason);
+    }
+
+    public void setScheduleInfoTableModel(javax.swing.table.DefaultTableModel model) {
+        tabScheduleInfo.setModel(model);
+    }
+
+    public JPanel getSchedulePanel() {
+        return (JPanel) ((JTabbedPane) getContentPane().getComponent(0)).getComponentAt(0);
+    }
+
+    public JPanel getReSchedulePanel() {
+        return (JPanel) ((JTabbedPane) getContentPane().getComponent(0)).getComponentAt(1);
     }
 
     // ===== Listeners =====
@@ -193,11 +218,20 @@ public class AppointmentView extends JFrame {
     }
 
     public void addExportListener(ActionListener listener) {
-        btnExport.addActionListener(listener);
+        btnExportSchedule.addActionListener(listener);
+        btnExportReSchedule.addActionListener(listener);
     }
     
-    public void addClearListener(ActionListener listener) {
-        btnClear.addActionListener(listener);
+    public void addClearScheduleListener(ActionListener listener) {
+        btnClearSchedule.addActionListener(listener);
+    }
+
+    public void addClearReScheduleListener(ActionListener listener) {
+        btnClearReSchedule.addActionListener(listener);
+    }
+
+    public void addSearchAppointmentListener(ActionListener listener) {
+        btnSearchAppointment.addActionListener(listener);
     }
 
     public void showDialog(String message) {

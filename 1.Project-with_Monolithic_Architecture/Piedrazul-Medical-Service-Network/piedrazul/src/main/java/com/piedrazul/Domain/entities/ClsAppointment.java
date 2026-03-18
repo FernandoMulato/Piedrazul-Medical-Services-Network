@@ -1,6 +1,6 @@
 package com.piedrazul.Domain.entities;
 
-import java.sql.Date;
+import java.util.Date;
 
 import com.piedrazul.Domain.enums.AppointmentStatus;
 import com.piedrazul.Domain.enums.AttentionType;

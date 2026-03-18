@@ -1,12 +1,14 @@
 package com.piedrazul.Infrastructure.repository.impl;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.piedrazul.Domain.entities.ClsAppointment;
@@ -34,7 +36,7 @@ public class ClsAppointmentRepository implements IAppointmentRepository {
       pstmt.setLong(1, appointment.getAttCitizenshipCardPatient());
       pstmt.setString(2, appointment.getAttPhoneNumber());
       pstmt.setLong(3, appointment.getAttMedicalStaffId());
-      pstmt.setString(4, appointment.getAttDateAndTime().toString());
+      pstmt.setString(4, new SimpleDateFormat("yyyy-MM-dd HH:mm").format(appointment.getAttDateAndTime()));
       pstmt.setString(5, appointment.getAttAttentionType().name());
       pstmt.setString(6, appointment.getAttStatus().name());
       pstmt.setString(7, appointment.getAttReason());
@@ -69,7 +71,7 @@ public class ClsAppointmentRepository implements IAppointmentRepository {
 
       pstmt.setString(1, appointment.getAttPhoneNumber());
       pstmt.setLong(2, appointment.getAttMedicalStaffId());
-      pstmt.setString(3, appointment.getAttDateAndTime().toString());
+      pstmt.setString(3, new SimpleDateFormat("yyyy-MM-dd HH:mm").format(appointment.getAttDateAndTime()));
       pstmt.setString(4, appointment.getAttAttentionType().name());
       pstmt.setString(5, appointment.getAttStatus().name());
       pstmt.setString(6, appointment.getAttReason());
@@ -105,7 +107,7 @@ public class ClsAppointmentRepository implements IAppointmentRepository {
 
   @Override
   public boolean opCheckScheduleConflict(long medId, String dateTime) {
-    String sql = "SELECT COUNT(*) FROM APPOINTMENT WHERE APP_MED_ID = ? AND APP_DATETIME = ? AND APP_STATUS != 'CANCELLED'";
+      String sql = "SELECT COUNT(*) FROM APPOINTMENT WHERE APP_MED_ID = ? AND APP_DATETIME = ? AND APP_STATUS != 'CANCELLED'";
 
     try (Connection conn = databaseConnection.connect();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -146,11 +148,23 @@ public class ClsAppointmentRepository implements IAppointmentRepository {
   }
 
   private ClsAppointment mapResultSetToAppointment(ResultSet rs) throws SQLException {
+    Date parsedDate;
+    String dateStr = rs.getString("APP_DATETIME");
+    try {
+        parsedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(dateStr);
+    } catch (ParseException e) {
+        try {
+            parsedDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
+        } catch (ParseException e2) {
+            throw new SQLException("Error parsing appointment date", e2);
+        }
+    }
+    
     ClsAppointment appointment = new ClsAppointment(
         rs.getLong("APP_PAT_CITIZENSHIPCARD"),
         rs.getString("APP_PAT_PHONENUMBER"),
         rs.getLong("APP_MED_ID"),
-        Date.valueOf(rs.getString("APP_DATETIME")),
+        parsedDate,
         AttentionType.valueOf(rs.getString("APP_TYPEOFCARE")),
         rs.getString("APP_REASON")
     );
