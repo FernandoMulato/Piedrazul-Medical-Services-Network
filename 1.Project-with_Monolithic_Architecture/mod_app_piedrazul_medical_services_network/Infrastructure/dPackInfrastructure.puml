@@ -1,10 +1,12 @@
-@startuml DomainPackages
+@startuml InfrastructurePackages
 
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
 
 package "infrastructure" {
-    package "persistence" {}
-    package "config" {}
+  package "repository" {}
+  package "config" {}
 }
+
+repository ..> config
 
 @enduml

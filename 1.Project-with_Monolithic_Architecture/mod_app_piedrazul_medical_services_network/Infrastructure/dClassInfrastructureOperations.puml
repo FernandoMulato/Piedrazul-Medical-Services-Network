@@ -1,0 +1,11 @@
+@startuml InfrastructureOperationsClasses
+
+interface IUserRepository <<interface>> #aliceblue;line:blue;text:blue {
+  +verifyUser(String username, String password): Role 
+}
+
+class SQLiteUserRepository <<repository>> #PaleGreen;line:Black;text:Black {
+  +verifyUser(String username, String password): Role
+}
+
+@enduml

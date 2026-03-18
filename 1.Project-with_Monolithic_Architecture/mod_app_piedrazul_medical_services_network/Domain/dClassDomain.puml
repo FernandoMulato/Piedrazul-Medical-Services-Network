@@ -1,4 +1,4 @@
-@startuml ClassesDomain
+@startuml DomainClasses
 
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
 
@@ -53,7 +53,7 @@ enum Profession <<enumeration>> #LightBlue;line:Black;text:Black {
 }
 
 enum Specialty <<enumeration>> #LightBlue;line:Black;text:Black {
-  Neural therapy
+  NeuralTherapy
   Chiropractic
   Physiotherapy
 }
@@ -75,13 +75,5 @@ ClinicalStaff ..> Profession
 ClinicalStaff ..> Specialty
 
 Appointment ..> AttentionType
-
-' UserController ..> User
-' UserController ..> IUserService
-
-' IUserService ..> User
-
-' UserService ..> User
-' UserService ..> IUserRepository
 
 @enduml

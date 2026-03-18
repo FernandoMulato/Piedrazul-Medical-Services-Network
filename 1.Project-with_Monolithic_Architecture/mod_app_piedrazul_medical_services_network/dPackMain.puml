@@ -1,4 +1,4 @@
-@startuml PackagesDiagram
+@startuml MainPackage
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
 
 
