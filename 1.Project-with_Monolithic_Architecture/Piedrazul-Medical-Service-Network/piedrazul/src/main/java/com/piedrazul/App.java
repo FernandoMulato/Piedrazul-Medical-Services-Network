@@ -2,7 +2,9 @@ package com.piedrazul;
 
 import javax.swing.SwingUtilities;
 
+import com.piedrazul.Presentation.controller.AppointmentController;
 import com.piedrazul.Presentation.controller.LoginController;
+import com.piedrazul.Presentation.views.AppointmentView;
 import com.piedrazul.Presentation.views.LoginView;
 
 public class App {
@@ -11,11 +13,15 @@ public class App {
 
     SwingUtilities.invokeLater(() -> {
 
-      LoginView loginView = new LoginView();
+      //LoginView loginView = new LoginView();
 
-      new LoginController(loginView);
+      //new LoginController(loginView);
 
-      loginView.setVisible(true);
+      //loginView.setVisible(true);
+
+      AppointmentView appointmentView = new AppointmentView();
+      new AppointmentController(appointmentView);
+      appointmentView.setVisible(true);
 
     });
   }
