@@ -93,36 +93,55 @@ public class AppointmentView extends JFrame {
         tabMain.add(panelSchedule, "Agendar cita");
         
         //  PANEL REAGENDAR CITAS
-        JPanel panelReSchedule = new JPanel(new GridLayout(0, 2, 10, 15));
-        panelReSchedule.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 30));
+        JPanel panelReSchedule = new JPanel(new BorderLayout(10, 15));
+        panelReSchedule.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
         
-        panelReSchedule.add(new JLabel("ID Cita (para reagendar):"));
+        JPanel topPanel = new JPanel(new BorderLayout(10, 15));
+        
+        JPanel formReSchedule = new JPanel(new GridLayout(0, 2, 10, 15));
+        formReSchedule.add(new JLabel("ID Cita (para reagendar/buscar):"));
         txtAppointmentId = new JTextField();
-        panelReSchedule.add(txtAppointmentId);
+        formReSchedule.add(txtAppointmentId);
 
+        formReSchedule.add(new JLabel("")); // alineación
         btnSearchAppointment = new JButton("Buscar cita");
-        tabScheduleInfo = new JTable();
-        panelReSchedule.add(btnSearchAppointment);
-        panelReSchedule.add(new JScrollPane(tabScheduleInfo));
+        formReSchedule.add(btnSearchAppointment);
 
-        panelReSchedule.add(new JLabel("Fecha y Hora nueva para reagendar:"));
+        topPanel.add(formReSchedule, BorderLayout.NORTH);
+        
+        tabScheduleInfo = new JTable();
+        JScrollPane scrollPane = new JScrollPane(tabScheduleInfo);
+        scrollPane.setPreferredSize(new Dimension(500, 120));
+        topPanel.add(scrollPane, BorderLayout.CENTER);
+
+        panelReSchedule.add(topPanel, BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        
+        JPanel lowerForm = new JPanel(new GridLayout(0, 2, 10, 15));
+        lowerForm.add(new JLabel("Fecha y Hora nueva para reagendar:"));
         SpinnerDateModel model2 = new SpinnerDateModel();
         dateTimeSpinnerReSchedule = new JSpinner(model2);
         JSpinner.DateEditor editor2 = new JSpinner.DateEditor(dateTimeSpinnerReSchedule, "yyyy-MM-dd HH:mm");
         dateTimeSpinnerReSchedule.setEditor(editor2);
-        panelReSchedule.add(dateTimeSpinnerReSchedule);
+        lowerForm.add(dateTimeSpinnerReSchedule);
+        
+        bottomPanel.add(lowerForm, BorderLayout.NORTH);
 
         JPanel panelButtonsReSchedule = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        panelButtonsReSchedule.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 30));
+        panelButtonsReSchedule.setBorder(BorderFactory.createEmptyBorder(15, 0, 5, 0));
 
         btnClearReSchedule = new JButton("Limpiar");
-        btnReSchedule = new JButton("Reagendar Cita");
         btnExportReSchedule = new JButton("Exportar Citas");
+        btnReSchedule = new JButton("Reagendar Cita");
         
         panelButtonsReSchedule.add(btnClearReSchedule);
+        panelButtonsReSchedule.add(btnExportReSchedule);
         panelButtonsReSchedule.add(btnReSchedule);
 
-        panelReSchedule.add(panelButtonsReSchedule, BorderLayout.SOUTH);
+        bottomPanel.add(panelButtonsReSchedule, BorderLayout.SOUTH);
+
+        panelReSchedule.add(bottomPanel, BorderLayout.SOUTH);
 
         tabMain.add(panelReSchedule, "Reagendar cita");
     }
