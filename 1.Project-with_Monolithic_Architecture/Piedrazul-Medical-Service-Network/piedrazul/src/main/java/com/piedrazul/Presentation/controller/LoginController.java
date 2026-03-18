@@ -4,15 +4,15 @@ import com.piedrazul.Presentation.views.AdminPanelView;
 import com.piedrazul.Presentation.views.LoginView;
 import com.piedrazul.Application.services.IUserService;
 import com.piedrazul.Domain.enums.Role;
-import com.piedrazul.Application.services.impl.ClsUserServiceImpl;
 
 public class LoginController {
 
   private LoginView loginView;
-  private IUserService userService = new ClsUserServiceImpl();
+  private final IUserService userService;
 
-  public LoginController(LoginView loginView) {
+  public LoginController(LoginView loginView , IUserService userService) {
     this.loginView = loginView;
+    this.userService = userService;
 
     // Escuchar botón login
     this.loginView.addLoginListener(e -> login());
@@ -29,7 +29,7 @@ public class LoginController {
         loginView.dispose(); // cerrar login
 
         AdminPanelView adminPanel = new AdminPanelView();
-        new AdminPanelController(adminPanel);
+        new AdminPanelController(adminPanel, userService);
 
         adminPanel.setVisible(true);
       }

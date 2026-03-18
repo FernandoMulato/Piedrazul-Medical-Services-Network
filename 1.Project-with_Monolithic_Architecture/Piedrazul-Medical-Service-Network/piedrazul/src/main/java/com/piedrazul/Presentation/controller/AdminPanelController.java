@@ -1,15 +1,18 @@
 package com.piedrazul.Presentation.controller;
 
+import com.piedrazul.Application.services.IUserService;
 import com.piedrazul.Presentation.views.AdminPanelView;
 import com.piedrazul.Presentation.views.LoginView;
 
 public class AdminPanelController {
 
   private AdminPanelView view;
+  private final IUserService userService;
 
-  public AdminPanelController(AdminPanelView view) {
+  public AdminPanelController(AdminPanelView view, IUserService userService) {
 
     this.view = view;
+    this.userService = userService;
 
     view.addUsersListener(e -> manageUsers());
     view.addAppointmentsListener(e -> manageAppointments());
@@ -34,7 +37,7 @@ public class AdminPanelController {
     view.dispose();
 
     LoginView login = new LoginView();
-    new LoginController(login);
+    new LoginController(login, userService);
 
     login.setVisible(true);
   }

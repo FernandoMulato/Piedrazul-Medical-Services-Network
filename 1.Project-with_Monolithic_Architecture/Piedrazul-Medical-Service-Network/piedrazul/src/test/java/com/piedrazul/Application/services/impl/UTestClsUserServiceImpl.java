@@ -5,8 +5,6 @@ import com.piedrazul.Infrastructure.repository.IUserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -17,19 +15,9 @@ import static org.mockito.Mockito.when;
 
 class UTestClsUserServiceImpl {
 
-  private ClsUserServiceImpl createServiceWithRepository(IUserRepository userRepositoryMock) throws Exception {
-    ClsUserServiceImpl service = new ClsUserServiceImpl();
-
-    Field field = ClsUserServiceImpl.class.getDeclaredField("userRepository");
-    field.setAccessible(true);
-    field.set(service, userRepositoryMock);
-
-    return service;
-  }
-
   @Test
   @DisplayName("opVerifyUser returns role from repository for valid credentials")
-  void testReturnsRoleFromRepositoryForValidCredentials() throws Exception {
+  void testReturnsRoleFromRepositoryForValidCredentials() {
     // Arrange
     String username = "validUser";
     String password = "validPassword";
@@ -38,7 +26,7 @@ class UTestClsUserServiceImpl {
     IUserRepository userRepositoryMock = mock(IUserRepository.class);
     when(userRepositoryMock.opVerifyUser(eq(username), eq(password))).thenReturn(expectedRole);
 
-    ClsUserServiceImpl service = createServiceWithRepository(userRepositoryMock);
+    ClsUserServiceImpl service = new ClsUserServiceImpl(userRepositoryMock);
 
     // Act
     Role result = service.opVerifyUser(username, password);
@@ -50,7 +38,7 @@ class UTestClsUserServiceImpl {
 
   @Test
   @DisplayName("opVerifyUser returns null when repository returns null (borderline case)")
-  void testReturnsNullWhenRepositoryReturnsNull() throws Exception {
+  void testReturnsNullWhenRepositoryReturnsNull() {
     // Arrange
     String username = "userWithoutRole";
     String password = "anyPassword";
@@ -58,7 +46,7 @@ class UTestClsUserServiceImpl {
     IUserRepository userRepositoryMock = mock(IUserRepository.class);
     when(userRepositoryMock.opVerifyUser(eq(username), eq(password))).thenReturn(null);
 
-    ClsUserServiceImpl service = createServiceWithRepository(userRepositoryMock);
+    ClsUserServiceImpl service = new ClsUserServiceImpl(userRepositoryMock);
 
     // Act
     Role result = service.opVerifyUser(username, password);
@@ -70,7 +58,7 @@ class UTestClsUserServiceImpl {
 
   @Test
   @DisplayName("opVerifyUser propagates RuntimeException thrown by repository (error case)")
-  void testThrowsRuntimeExceptionWhenRepositoryThrows() throws Exception {
+  void testThrowsRuntimeExceptionWhenRepositoryThrows() {
     // Arrange
     String username = "invalidUser";
     String password = "wrongPassword";
@@ -79,7 +67,7 @@ class UTestClsUserServiceImpl {
     RuntimeException expected = new RuntimeException("Repository error");
     when(userRepositoryMock.opVerifyUser(eq(username), eq(password))).thenThrow(expected);
 
-    ClsUserServiceImpl service = createServiceWithRepository(userRepositoryMock);
+    ClsUserServiceImpl service = new ClsUserServiceImpl(userRepositoryMock);
 
     // Act & Assert
     RuntimeException thrown = assertThrows(RuntimeException.class,

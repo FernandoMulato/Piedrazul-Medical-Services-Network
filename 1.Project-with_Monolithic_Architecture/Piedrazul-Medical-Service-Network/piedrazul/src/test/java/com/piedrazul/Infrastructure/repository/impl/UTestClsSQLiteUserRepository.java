@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class UTestClsSQLiteUserRepository {
@@ -46,6 +47,8 @@ class UTestClsSQLiteUserRepository {
 
     // Assert
     assertEquals(Role.Administrator, result);
+    verify(preparedStatementMock).setString(1, username);
+    verify(preparedStatementMock).setString(2, password);
   }
 
   @Test
@@ -75,6 +78,8 @@ class UTestClsSQLiteUserRepository {
 
     // Assert
     assertEquals(Role.Patient, result);
+    verify(preparedStatementMock).setString(1, username);
+    verify(preparedStatementMock).setString(2, password);
   }
 
   @Test
@@ -104,6 +109,8 @@ class UTestClsSQLiteUserRepository {
 
     // Assert
     assertEquals(Role.ClinicalStaff, result);
+    verify(preparedStatementMock).setString(1, username);
+    verify(preparedStatementMock).setString(2, password);
   }
 
   @Test
@@ -133,6 +140,8 @@ class UTestClsSQLiteUserRepository {
 
     // Assert
     assertEquals(Role.AppointmentManager, result);
+    verify(preparedStatementMock).setString(1, username);
+    verify(preparedStatementMock).setString(2, password);
   }
 
   @Test
@@ -162,6 +171,8 @@ class UTestClsSQLiteUserRepository {
 
     // Assert
     assertNull(result);
+    verify(preparedStatementMock).setString(1, username);
+    verify(preparedStatementMock).setString(2, password);
   }
 
   @Test
@@ -189,6 +200,8 @@ class UTestClsSQLiteUserRepository {
         () -> repository.opVerifyUser(username, password));
 
     assertEquals("Usuario o contraseña incorrectos. El usuario no existe en la base de datos.", thrown.getMessage());
+    verify(preparedStatementMock).setString(1, username);
+    verify(preparedStatementMock).setString(2, password);
   }
 
   @Test
@@ -218,6 +231,8 @@ class UTestClsSQLiteUserRepository {
         () -> repository.opVerifyUser(username, password));
 
     assertEquals("Acceso denegado - Usuario BLOQUEADO", thrown.getMessage());
+    verify(preparedStatementMock).setString(1, username);
+    verify(preparedStatementMock).setString(2, password);
   }
 
   @Test
@@ -267,6 +282,35 @@ class UTestClsSQLiteUserRepository {
 
     // Assert
     assertEquals(Role.Patient, result);
+    verify(preparedStatementMock).setString(1, username);
+    verify(preparedStatementMock).setString(2, password);
+  }
+
+  @Test
+  @DisplayName("opVerifyUser wraps SQLException when executeQuery throws SQLException")
+  void testThrowsRuntimeExceptionWhenExecuteQueryThrowsSQLException() throws Exception {
+    // Arrange
+    String username = "anyUser";
+    String password = "anyPass";
+
+    IDatabaseConnection dbConnectionMock = mock(IDatabaseConnection.class);
+    Connection connectionMock = mock(Connection.class);
+    PreparedStatement preparedStatementMock = mock(PreparedStatement.class);
+    SQLException sqlException = new SQLException("Query failed");
+
+    when(dbConnectionMock.connect()).thenReturn(connectionMock);
+    when(connectionMock.prepareStatement(anyString())).thenReturn(preparedStatementMock);
+    when(preparedStatementMock.executeQuery()).thenThrow(sqlException);
+
+    ClsSQLiteUserRepository repository = new ClsSQLiteUserRepository(dbConnectionMock);
+
+    // Act & Assert
+    RuntimeException thrown = assertThrows(RuntimeException.class,
+        () -> repository.opVerifyUser(username, password));
+
+    assertEquals("Error verificando el usuario. 500", thrown.getMessage());
+    verify(preparedStatementMock).setString(1, username);
+    verify(preparedStatementMock).setString(2, password);
   }
 }
 
