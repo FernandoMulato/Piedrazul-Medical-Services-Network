@@ -6,11 +6,11 @@ import java.awt.event.ActionListener;
 import java.util.Date;
 
 public class AppointmentView extends JFrame {
-    
+
     private JTextField txtPatientID;
     private JTextField txtPhoneNumber;
     private JTextField txtMedID;
-    private JComboBox<String> cbEspecialidad;
+    private JComboBox<String> cmbSpeciality;
     private JSpinner dateTimeSpinner;
     
     private JButton btnAgendar;
@@ -50,8 +50,8 @@ public class AppointmentView extends JFrame {
 
         panelFormulario.add(new JLabel("Especialidad:"));
         String[] especialidades = {"Neuroterapia", "Quiropractico", "Fisioterapia"};
-        cbEspecialidad = new JComboBox<>(especialidades);
-        panelFormulario.add(cbEspecialidad);
+        cmbSpeciality = new JComboBox<>(especialidades);
+        panelFormulario.add(cmbSpeciality);
 
         panelFormulario.add(new JLabel("Fecha y Hora:"));
         SpinnerDateModel model = new SpinnerDateModel();
@@ -88,11 +88,31 @@ public class AppointmentView extends JFrame {
     }
 
     public String getEspecialidad() {
-        return (String) cbEspecialidad.getSelectedItem();
+        return (String) cmbSpeciality.getSelectedItem();
     }
 
-    public Date getSelectedDate() {
+    public Date getDate() {
         return (Date) dateTimeSpinner.getValue();
+    }
+
+    public void setPatientID(String id) {
+    txtPatientID.setText(id);
+    }
+
+    public void setPhoneNumber(String phone) {
+        txtPhoneNumber.setText(phone);
+    }
+
+    public void setMedID(String id) {
+        txtMedID.setText(id);
+    }
+
+    public void setSpeciality(String speciality) {
+        cmbSpeciality.setSelectedItem(speciality);
+    }
+
+    public void setDate(Date date) {
+        dateTimeSpinner.setValue(date);
     }
 
     public void addAgendarListener(ActionListener listener) {
@@ -101,5 +121,9 @@ public class AppointmentView extends JFrame {
     
     public void addLimpiarListener(ActionListener listener) {
         btnLimpiar.addActionListener(listener);
+    }
+
+    public void showDialog (String message) {
+        JOptionPane.showMessageDialog(this, message, "Aviso", JOptionPane.INFORMATION_MESSAGE);
     }
 }
