@@ -1,4 +1,4 @@
-@startuml SistemaAgendamientoUseCases
+@startuml AppointmentSystemUseCases
 left to right direction
 
 actor Paciente
@@ -8,14 +8,14 @@ actor Administrador
 
 rectangle "Sistema de Agendamiento de Citas Médicas" {
 
-    usecase "Agendar Cita" as UC1
-    usecase "Cancelar Cita" as UC2
-    usecase "Reprogramar Cita" as UC3
-    usecase "Consultar Agenda" as UC4
-    usecase "Registrar Historia Clínica" as UC5
-    usecase "Consultar Historia Clínica" as UC6
-    usecase "Registrar Usuario" as UC7
-    usecase "Gestionar Usuarios" as UC8
+  usecase "Agendar Cita" as UC1
+  usecase "Cancelar Cita" as UC2
+  usecase "Reprogramar Cita" as UC3
+  usecase "Consultar Agenda" as UC4
+  usecase "Registrar Historia Clínica" as UC5
+  usecase "Consultar Historia Clínica" as UC6
+  usecase "Registrar Usuario" as UC7
+  usecase "Gestionar Usuarios" as UC8
 }
 
 Paciente --> UC1
