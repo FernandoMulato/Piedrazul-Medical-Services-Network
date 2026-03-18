@@ -32,63 +32,93 @@ public class AppointmentView extends JFrame {
     private void initComponents() {
         this.setLayout(new BorderLayout(10, 10));
 
-        JLabel lblTitulo = new JLabel("AGENDAR NUEVA CITA", SwingConstants.CENTER);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
-        lblTitulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-        this.add(lblTitulo, BorderLayout.NORTH);
+        JTabbedPane tabMain = new JTabbedPane();
+        this.add(tabMain);
 
-        JPanel panelFormulario = new JPanel(new GridLayout(0, 2, 10, 15));
-        panelFormulario.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 30));
+        //  Panel agendar citas
+        JLabel lblScheduleTitle = new JLabel("Panel de gestion de citas", SwingConstants.CENTER);
+        lblScheduleTitle.setFont(new Font("Arial", Font.BOLD, 18));
+        lblScheduleTitle.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        this.add(lblScheduleTitle, BorderLayout.NORTH);
 
-        panelFormulario.add(new JLabel("ID Cita (para reagendar):"));
-        txtAppointmentId = new JTextField();
-        panelFormulario.add(txtAppointmentId);
+        JPanel panelSchedule = new JPanel(new GridLayout(0, 2, 10, 15));
+        panelSchedule.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 30));
 
-        panelFormulario.add(new JLabel("Documento del Paciente:"));
+        panelSchedule.add(new JLabel("Documento del Paciente:"));
         txtPatientID = new JTextField();
-        panelFormulario.add(txtPatientID);
+        panelSchedule.add(txtPatientID);
 
-        panelFormulario.add(new JLabel("Numero Telefonico:"));
+        panelSchedule.add(new JLabel("Numero Telefonico:"));
         txtPhoneNumber = new JTextField();
-        panelFormulario.add(txtPhoneNumber);
+        panelSchedule.add(txtPhoneNumber);
 
-        panelFormulario.add(new JLabel("Identificacion del personal medico:"));
+        panelSchedule.add(new JLabel("Identificacion del personal medico:"));
         txtMedID = new JTextField();
-        panelFormulario.add(txtMedID);
+        panelSchedule.add(txtMedID);
 
-        panelFormulario.add(new JLabel("Especialidad:"));
+        panelSchedule.add(new JLabel("Especialidad:"));
         String[] especialidades = {"Neuroterapia", "Quiropractico", "Fisioterapia"};
         cmbSpeciality = new JComboBox<>(especialidades);
-        panelFormulario.add(cmbSpeciality);
+        panelSchedule.add(cmbSpeciality);
 
-        panelFormulario.add(new JLabel("Fecha y Hora:"));
+        panelSchedule.add(new JLabel("Fecha y Hora:"));
         SpinnerDateModel model = new SpinnerDateModel();
         dateTimeSpinner = new JSpinner(model);
         JSpinner.DateEditor editor = new JSpinner.DateEditor(dateTimeSpinner, "yyyy-MM-dd HH:mm");
         dateTimeSpinner.setEditor(editor);
-        panelFormulario.add(dateTimeSpinner);
+        panelSchedule.add(dateTimeSpinner);
 
-        panelFormulario.add(new JLabel("Motivo de la cita:"));
+        panelSchedule.add(new JLabel("Motivo de la cita:"));
         txtReason = new JTextField();
-        panelFormulario.add(txtReason);
+        panelSchedule.add(txtReason);
 
-        this.add(panelFormulario, BorderLayout.CENTER);
-
-        // Panel de Botones
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        panelBotones.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 30));
+        JPanel panelButtonsSchedule = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelButtonsSchedule.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 30));
 
         btnLimpiar = new JButton("Limpiar");
         btnAgendar = new JButton("Agendar Cita");
+        btnExportar = new JButton("Exportar Citas");
+        
+        panelButtonsSchedule.add(btnLimpiar);
+        panelButtonsSchedule.add(btnAgendar);
+
+        panelSchedule.add(panelButtonsSchedule, BorderLayout.SOUTH);
+
+        tabMain.add(panelSchedule, "Agendar cita");
+        
+        //  Panel reagendar citas
+        JPanel panelReSchedule = new JPanel(new GridLayout(0, 2, 10, 15));
+        panelReSchedule.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 30));
+        
+        panelReSchedule.add(new JLabel("ID Cita (para reagendar):"));
+        txtAppointmentId = new JTextField();
+        panelReSchedule.add(txtAppointmentId);
+
+        JButton btnSearchAppointment = new JButton("Buscar cita");
+        JTable tabScheduleInfo = new JTable();
+        panelReSchedule.add(btnSearchAppointment);
+        panelReSchedule.add(tabScheduleInfo);
+
+        panelReSchedule.add(new JLabel("Fecha y Hora nueva para reagendar:"));
+        SpinnerDateModel model2 = new SpinnerDateModel();
+        dateTimeSpinner = new JSpinner(model2);
+        JSpinner.DateEditor editor2 = new JSpinner.DateEditor(dateTimeSpinner, "yyyy-MM-dd HH:mm");
+        dateTimeSpinner.setEditor(editor2);
+        panelReSchedule.add(dateTimeSpinner);
+
+        JPanel panelButtonsReSchedule = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelButtonsReSchedule.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 30));
+
+        btnLimpiar = new JButton("Limpiar");
         btnReagendar = new JButton("Reagendar Cita");
         btnExportar = new JButton("Exportar Citas");
         
-        panelBotones.add(btnLimpiar);
-        panelBotones.add(btnAgendar);
-        panelBotones.add(btnReagendar);
-        panelBotones.add(btnExportar);
+        panelButtonsReSchedule.add(btnLimpiar);
+        panelButtonsReSchedule.add(btnReagendar);
 
-        this.add(panelBotones, BorderLayout.SOUTH);
+        panelReSchedule.add(panelButtonsReSchedule, BorderLayout.SOUTH);
+
+        tabMain.add(panelReSchedule, "Reagendar cita");
     }
 
     // ===== Getters =====
