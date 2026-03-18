@@ -12,13 +12,17 @@ public class AppointmentView extends JFrame {
     private JTextField txtMedID;
     private JComboBox<String> cmbSpeciality;
     private JSpinner dateTimeSpinner;
+    private JTextField txtReason;
+    private JTextField txtAppointmentId;
     
     private JButton btnAgendar;
+    private JButton btnReagendar;
+    private JButton btnExportar;
     private JButton btnLimpiar;
 
     public AppointmentView() {
         setTitle("PiedraAzul - Agendamiento de Citas");
-        setSize(550, 450);
+        setSize(600, 550);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         
@@ -35,6 +39,10 @@ public class AppointmentView extends JFrame {
 
         JPanel panelFormulario = new JPanel(new GridLayout(0, 2, 10, 15));
         panelFormulario.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 30));
+
+        panelFormulario.add(new JLabel("ID Cita (para reagendar):"));
+        txtAppointmentId = new JTextField();
+        panelFormulario.add(txtAppointmentId);
 
         panelFormulario.add(new JLabel("Documento del Paciente:"));
         txtPatientID = new JTextField();
@@ -60,6 +68,10 @@ public class AppointmentView extends JFrame {
         dateTimeSpinner.setEditor(editor);
         panelFormulario.add(dateTimeSpinner);
 
+        panelFormulario.add(new JLabel("Motivo de la cita:"));
+        txtReason = new JTextField();
+        panelFormulario.add(txtReason);
+
         this.add(panelFormulario, BorderLayout.CENTER);
 
         // Panel de Botones
@@ -68,11 +80,21 @@ public class AppointmentView extends JFrame {
 
         btnLimpiar = new JButton("Limpiar");
         btnAgendar = new JButton("Agendar Cita");
+        btnReagendar = new JButton("Reagendar Cita");
+        btnExportar = new JButton("Exportar Citas");
         
         panelBotones.add(btnLimpiar);
         panelBotones.add(btnAgendar);
+        panelBotones.add(btnReagendar);
+        panelBotones.add(btnExportar);
 
         this.add(panelBotones, BorderLayout.SOUTH);
+    }
+
+    // ===== Getters =====
+
+    public String getAppointmentId() {
+        return txtAppointmentId.getText();
     }
 
     public String getPatientID() {
@@ -95,8 +117,18 @@ public class AppointmentView extends JFrame {
         return (Date) dateTimeSpinner.getValue();
     }
 
+    public String getReason() {
+        return txtReason.getText();
+    }
+
+    // ===== Setters =====
+
+    public void setAppointmentId(String id) {
+        txtAppointmentId.setText(id);
+    }
+
     public void setPatientID(String id) {
-    txtPatientID.setText(id);
+        txtPatientID.setText(id);
     }
 
     public void setPhoneNumber(String phone) {
@@ -115,15 +147,29 @@ public class AppointmentView extends JFrame {
         dateTimeSpinner.setValue(date);
     }
 
+    public void setReason(String reason) {
+        txtReason.setText(reason);
+    }
+
+    // ===== Listeners =====
+
     public void addAgendarListener(ActionListener listener) {
         btnAgendar.addActionListener(listener);
+    }
+
+    public void addReagendarListener(ActionListener listener) {
+        btnReagendar.addActionListener(listener);
+    }
+
+    public void addExportarListener(ActionListener listener) {
+        btnExportar.addActionListener(listener);
     }
     
     public void addLimpiarListener(ActionListener listener) {
         btnLimpiar.addActionListener(listener);
     }
 
-    public void showDialog (String message) {
+    public void showDialog(String message) {
         JOptionPane.showMessageDialog(this, message, "Aviso", JOptionPane.INFORMATION_MESSAGE);
     }
 }
