@@ -2,8 +2,15 @@ package com.piedrazul.Application.services.impl;
 
 import com.piedrazul.Application.services.IUserService;
 import com.piedrazul.Domain.entities.ClsUser;
+import com.piedrazul.Domain.enums.Role;
+import com.piedrazul.Infrastructure.repository.IUserRepository;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class ClsUserServiceImpl implements IUserService {
+
+  private final IUserRepository userRepository;
 
   @Override
   public ClsUser opCreateUser(ClsUser prmUser) {
@@ -25,8 +32,7 @@ public class ClsUserServiceImpl implements IUserService {
   }
 
   @Override
-  public boolean opLogin(String prmUsername, String prmPassword) {
-    return true;
+  public Role opVerifyUser(String prmUsername, String prmPassword) {
+    return userRepository.opVerifyUser(prmUsername, prmPassword);
   }
-
 }

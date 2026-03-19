@@ -4,6 +4,19 @@ class UserController <<controller>> #PaleGreen;line:Black;text:Black {
 
 }
 
+class LoginView <<view>> #SkyBlue;line:Black;text:Black {
+
+}
+
+class AdminPanelView <<view>> #SkyBlue;line:Black;text:Black {
+}
+
+class LoginController <<controller>> #PaleGreen;line:Black;text:Black {
+}
+
+class AdminPanelController <<controller>> #PaleGreen;line:Black;text:Black {
+}
+
 ' from domain layer
 abstract User<Domain Layer> <<abstract>> #Pink;line:Black;line.dotted;text:gray {
   # id: long 
@@ -17,7 +30,20 @@ abstract User<Domain Layer> <<abstract>> #Pink;line:Black;line.dotted;text:gray 
 ' from application layer
 interface IUserService<Application Layer> <<interface>> #aliceblue;line:blue;text:blue {}
 
+' from domain layer
+enum Role<Domain Layer> <<enumeration>> #LightBlue;line:Black;text:Black {
+  Administrator
+  Patient
+  ClinicalStaff
+  AppointmentManager
+}
+
 UserController ..> User
 UserController ..> IUserService
+LoginView ..> LoginController
+LoginView <..> AdminPanelView
+AdminPanelView ..> AdminPanelController
+LoginController ..> IUserService
+LoginController ..> Role
 
 @enduml
