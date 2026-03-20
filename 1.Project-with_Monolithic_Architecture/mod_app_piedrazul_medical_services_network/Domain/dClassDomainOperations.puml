@@ -1,3 +1,7 @@
 @startuml DomainOperationsClasses
 
+class UserFactory <<factory pattern>> #PaleGreen;line:Black;text:Black {
+  <<factory method>> + createUser(): User 
+}
+
 @enduml

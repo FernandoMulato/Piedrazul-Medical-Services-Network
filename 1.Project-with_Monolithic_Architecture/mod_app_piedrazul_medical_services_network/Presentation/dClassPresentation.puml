@@ -39,7 +39,7 @@ enum Role<Domain Layer> <<enumeration>> #LightBlue;line:Black;text:Black {
 }
 
 UserController ..> User
-UserController ..> IUserService
+UserController -> IUserService
 LoginView <..> AdminPanelView
 LoginController ..> Role
 AdminPanelController "1..1" -> "1..1" AdminPanelView : use

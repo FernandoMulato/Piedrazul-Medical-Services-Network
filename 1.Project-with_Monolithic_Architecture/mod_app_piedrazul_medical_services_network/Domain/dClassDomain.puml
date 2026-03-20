@@ -69,7 +69,6 @@ enum AttentionType <<enumeration>> #LightBlue;line:Black;text:Black {
 }
 
 class UserFactory <<factory pattern>> #PaleGreen;line:Black;text:Black {
-  
 }
 
 User ..> Role
@@ -79,5 +78,7 @@ ClinicalStaff ..> Profession
 ClinicalStaff ..> Specialty
 
 Appointment ..> AttentionType
+
+UserFactory ..> User
 
 @enduml
