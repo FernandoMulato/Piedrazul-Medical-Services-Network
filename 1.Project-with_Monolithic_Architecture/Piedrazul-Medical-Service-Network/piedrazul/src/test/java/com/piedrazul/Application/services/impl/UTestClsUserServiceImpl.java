@@ -1,5 +1,6 @@
 package com.piedrazul.Application.services.impl;
 
+import com.piedrazul.Domain.core.events.ClsClinicEventBus;
 import com.piedrazul.Domain.enums.Role;
 import com.piedrazul.Infrastructure.repository.IUserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -21,12 +22,15 @@ class UTestClsUserServiceImpl {
     // Arrange
     String username = "validUser";
     String password = "validPassword";
-    Role expectedRole = Role.Patient;
+    Role expectedRole = Role.PATIENT;
 
     IUserRepository userRepositoryMock = mock(IUserRepository.class);
+
+    ClsClinicEventBus eventBusMock = mock(ClsClinicEventBus.class);
+
     when(userRepositoryMock.opVerifyUser(eq(username), eq(password))).thenReturn(expectedRole);
 
-    ClsUserServiceImpl service = new ClsUserServiceImpl(userRepositoryMock);
+    ClsUserServiceImpl service = new ClsUserServiceImpl(userRepositoryMock, eventBusMock);
 
     // Act
     Role result = service.opVerifyUser(username, password);
@@ -43,10 +47,11 @@ class UTestClsUserServiceImpl {
     String username = "userWithoutRole";
     String password = "anyPassword";
 
+    ClsClinicEventBus eventBusMock = mock(ClsClinicEventBus.class);
     IUserRepository userRepositoryMock = mock(IUserRepository.class);
     when(userRepositoryMock.opVerifyUser(eq(username), eq(password))).thenReturn(null);
 
-    ClsUserServiceImpl service = new ClsUserServiceImpl(userRepositoryMock);
+    ClsUserServiceImpl service = new ClsUserServiceImpl(userRepositoryMock, eventBusMock);
 
     // Act
     Role result = service.opVerifyUser(username, password);
@@ -63,11 +68,13 @@ class UTestClsUserServiceImpl {
     String username = "invalidUser";
     String password = "wrongPassword";
 
+    ClsClinicEventBus eventBusMock = mock(ClsClinicEventBus.class);
+
     IUserRepository userRepositoryMock = mock(IUserRepository.class);
     RuntimeException expected = new RuntimeException("Repository error");
     when(userRepositoryMock.opVerifyUser(eq(username), eq(password))).thenThrow(expected);
 
-    ClsUserServiceImpl service = new ClsUserServiceImpl(userRepositoryMock);
+    ClsUserServiceImpl service = new ClsUserServiceImpl(userRepositoryMock, eventBusMock);
 
     // Act & Assert
     RuntimeException thrown = assertThrows(RuntimeException.class,
@@ -77,4 +84,3 @@ class UTestClsUserServiceImpl {
     verify(userRepositoryMock).opVerifyUser(username, password);
   }
 }
-

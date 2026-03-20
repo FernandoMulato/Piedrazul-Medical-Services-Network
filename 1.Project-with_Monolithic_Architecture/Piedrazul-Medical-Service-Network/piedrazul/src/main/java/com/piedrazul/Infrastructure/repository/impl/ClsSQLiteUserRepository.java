@@ -5,11 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.piedrazul.Domain.entities.ClsUser;
 import com.piedrazul.Infrastructure.config.IDatabaseConnection;
 import com.piedrazul.Infrastructure.repository.IUserRepository;
 import com.piedrazul.Domain.enums.Role;
+import com.piedrazul.Domain.enums.State;
 
 import lombok.RequiredArgsConstructor;
 
@@ -95,13 +98,13 @@ public class ClsSQLiteUserRepository implements IUserRepository {
       if ("ACTIVE".equals(stateType)) {
         switch (roleType) {
           case "ADMINISTRATOR":
-            return Role.Administrator;
+            return Role.ADMINISTRATOR;
           case "PATIENT":
-            return Role.Patient;
+            return Role.PATIENT;
           case "CLINICALSTAFF":
-            return Role.ClinicalStaff;
+            return Role.CLINICALSTAFF;
           case "APPOINTMENTMANAGER":
-            return Role.AppointmentManager;
+            return Role.APPOINTMENTMANAGER;
         }
       } else {
         // La excepción debe ser para un caso especifico (MODIFICAR)
@@ -113,6 +116,40 @@ public class ClsSQLiteUserRepository implements IUserRepository {
 
     } catch (SQLException e) {
       throw new RuntimeException("Error verificando el usuario. 500", e);
+    }
+  }
+
+  @Override
+  public List<ClsUser> opFindAll() {
+
+    String sql = """
+        SELECT  R.ROLE_TYPE, U.USER_USERNAME, U.USER_FULLNAME, S.STATE_TYPE
+        FROM USER U
+        JOIN ROLE R ON U.USER_ROLE = R.ROLE_ID
+        JOIN STATE S ON U.USER_STATE = S.STATE_ID
+        """;
+
+    List<ClsUser> users = new ArrayList<>();
+
+    try (Connection conn = databaseConnection.connect();
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery()) {
+
+      while (rs.next()) {
+        ClsUser user = new ClsUser();
+
+        user.setAttRole(Role.valueOf(rs.getString("ROLE_TYPE")));
+        user.setAttUsername(rs.getString("USER_USERNAME"));
+        user.setAttFullname(rs.getString("USER_FULLNAME"));
+        user.setAttState(State.valueOf(rs.getString("STATE_TYPE")));
+
+        users.add(user);
+      }
+
+      return users;
+
+    } catch (SQLException e) {
+      throw new RuntimeException("Error obteniendo los usuarios", e);
     }
   }
 }
