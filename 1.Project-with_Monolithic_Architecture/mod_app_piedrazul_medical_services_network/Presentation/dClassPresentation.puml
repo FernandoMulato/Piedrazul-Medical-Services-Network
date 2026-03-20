@@ -40,10 +40,10 @@ enum Role<Domain Layer> <<enumeration>> #LightBlue;line:Black;text:Black {
 
 UserController ..> User
 UserController ..> IUserService
-LoginView ..> LoginController
 LoginView <..> AdminPanelView
-AdminPanelView ..> AdminPanelController
-LoginController ..> IUserService
 LoginController ..> Role
+AdminPanelController "1..1" -> "1..1" AdminPanelView : use
+LoginController "1..1" -> "1..1" LoginView : use
+LoginController "1..1" -> "1..1" IUserService : use
 
 @enduml
