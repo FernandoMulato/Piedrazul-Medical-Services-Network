@@ -1,4 +1,4 @@
-package com.piedrazul.Domain.core;
+package com.piedrazul.Domain.core.events;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

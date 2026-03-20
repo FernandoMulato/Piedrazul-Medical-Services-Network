@@ -46,7 +46,7 @@ class UTestClsSQLiteUserRepository {
     Role result = repository.opVerifyUser(username, password);
 
     // Assert
-    assertEquals(Role.Administrator, result);
+    assertEquals(Role.ADMINISTRATOR, result);
     verify(preparedStatementMock).setString(1, username);
     verify(preparedStatementMock).setString(2, password);
   }
@@ -77,7 +77,7 @@ class UTestClsSQLiteUserRepository {
     Role result = repository.opVerifyUser(username, password);
 
     // Assert
-    assertEquals(Role.Patient, result);
+    assertEquals(Role.PATIENT, result);
     verify(preparedStatementMock).setString(1, username);
     verify(preparedStatementMock).setString(2, password);
   }
@@ -108,7 +108,7 @@ class UTestClsSQLiteUserRepository {
     Role result = repository.opVerifyUser(username, password);
 
     // Assert
-    assertEquals(Role.ClinicalStaff, result);
+    assertEquals(Role.CLINICALSTAFF, result);
     verify(preparedStatementMock).setString(1, username);
     verify(preparedStatementMock).setString(2, password);
   }
@@ -139,7 +139,7 @@ class UTestClsSQLiteUserRepository {
     Role result = repository.opVerifyUser(username, password);
 
     // Assert
-    assertEquals(Role.AppointmentManager, result);
+    assertEquals(Role.APPOINTMENTMANAGER, result);
     verify(preparedStatementMock).setString(1, username);
     verify(preparedStatementMock).setString(2, password);
   }
@@ -281,7 +281,7 @@ class UTestClsSQLiteUserRepository {
     Role result = repository.opVerifyUser(username, password);
 
     // Assert
-    assertEquals(Role.Patient, result);
+    assertEquals(Role.PATIENT, result);
     verify(preparedStatementMock).setString(1, username);
     verify(preparedStatementMock).setString(2, password);
   }
