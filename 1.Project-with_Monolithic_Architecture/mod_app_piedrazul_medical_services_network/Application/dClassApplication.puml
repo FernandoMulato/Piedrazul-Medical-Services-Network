@@ -16,6 +16,9 @@ abstract User<Domain Layer> <<abstract>> #Pink;line:Black;line.dotted;text:gray 
   # state: State
 }
 
+class UserFactory<Domain Layer> <<factory pattern>> #PaleGreen;line:Black;text:Black {
+}
+
 ' from infrastructure layer
 interface IUserRepository<Infrastructure Layer> <<interface>> #aliceblue;line:blue;text:blue {}
 
@@ -29,8 +32,10 @@ enum Role<Domain Layer> <<enumeration>> #LightBlue;line:Black;text:Black {
 
 IUserService ..> User
 UserService ..> User
-UserService ..> IUserRepository
+UserService -> IUserRepository
 IUserService ..> Role
 UserService ..> Role
+UserService ..> UserFactory
+IUserService ..> UserFactory
 
 @enduml
