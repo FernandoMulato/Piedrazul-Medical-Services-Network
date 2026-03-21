@@ -18,12 +18,13 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class ClsSQLiteUserRepository implements IUserRepository {
+
   private final IDatabaseConnection databaseConnection;
 
   @Override
   public ClsUser opSave(ClsUser prmUser) {
     String sql = """
-        INSERT INTO TBL_USER(user_username, user_email, user_password, user_role, user_profession)
+        INSERT INTO USER(USER_USERNAME, USER_FULLNAME, USER_PASSWORD, USER_ROLE, USER_STATE)
         VALUES (?, ?, ?, ?, ?)
         """;
 
@@ -31,7 +32,10 @@ public class ClsSQLiteUserRepository implements IUserRepository {
         PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
       pstmt.setString(1, prmUser.getAttUsername());
-      pstmt.setString(2, prmUser.getAttPassword());
+      pstmt.setString(2, prmUser.getAttFullname());
+      pstmt.setString(3, prmUser.getAttPassword());
+      pstmt.setInt(4, prmUser.getAttRole().getId());   // Aquí se da el mapeo de enum con ID
+      pstmt.setInt(5, prmUser.getAttState().getId());  // Igual aquí
 
       int rowsAffected = pstmt.executeUpdate();
 
@@ -52,25 +56,83 @@ public class ClsSQLiteUserRepository implements IUserRepository {
 
   @Override
   public boolean opDelete(long id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'opDelete'");
+    String sql = "DELETE FROM USER WHERE USER_ID = ?";
+
+    try (Connection conn = databaseConnection.connect();
+        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+      pstmt.setLong(1, id);
+      return pstmt.executeUpdate() > 0;
+
+    } catch (SQLException e) {
+      throw new RuntimeException("Error eliminando usuario", e);
+    }
   }
 
   @Override
   public boolean opUpdate(ClsUser user) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'opUpdate'");
+    String sql = """
+        UPDATE USER
+        SET USER_USERNAME = ?, USER_FULLNAME = ?, USER_PASSWORD = ?, USER_ROLE = ?, USER_STATE = ?
+        WHERE USER_ID = ?
+        """;
+
+    try (Connection conn = databaseConnection.connect();
+        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+      pstmt.setString(1, user.getAttUsername());
+      pstmt.setString(2, user.getAttFullname());
+      pstmt.setString(3, user.getAttPassword());
+      pstmt.setInt(4, user.getAttRole().getId());   // / Aquí se da el mapeo de enum con ID
+      pstmt.setInt(5, user.getAttState().getId());  // Igual aquí
+      pstmt.setLong(6, user.getAttId());
+
+      return pstmt.executeUpdate() > 0;
+
+    } catch (SQLException e) {
+      throw new RuntimeException("Error actualizando usuario", e);
+    }
   }
 
   @Override
   public ClsUser opGet(long id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'opGet'");
+    String sql = """
+        SELECT U.USER_ID, U.USER_USERNAME, U.USER_FULLNAME, U.USER_PASSWORD,
+        R.ROLE_TYPE, S.STATE_TYPE
+        FROM USER U
+        JOIN ROLE R ON U.USER_ROLE = R.ROLE_ID
+        JOIN STATE S ON U.USER_STATE = S.STATE_ID
+        WHERE U.USER_ID = ?
+        """;
+
+    try (Connection conn = databaseConnection.connect();
+        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+      pstmt.setLong(1, id);
+      ResultSet rs = pstmt.executeQuery();
+
+      if (rs.next()) {
+        ClsUser user = new ClsUser();
+
+        user.setAttId(rs.getLong("USER_ID"));
+        user.setAttUsername(rs.getString("USER_USERNAME"));
+        user.setAttFullname(rs.getString("USER_FULLNAME"));
+        user.setAttPassword(rs.getString("USER_PASSWORD"));
+        user.setAttRole(Role.valueOf(rs.getString("ROLE_TYPE")));
+        user.setAttState(State.valueOf(rs.getString("STATE_TYPE")));
+
+        return user;
+      }
+
+      return null;
+
+    } catch (SQLException e) {
+      throw new RuntimeException("Error obteniendo usuario", e);
+    }
   }
 
   @Override
-  public Role opVerifyUser(String username, String password) throws RuntimeException {
-
+  public Role opVerifyUser(String username, String password) { // Verificamos el usuario con su contraseña 
     String sql = """
         SELECT R.ROLE_TYPE, S.STATE_TYPE
         FROM USER U
@@ -88,42 +150,29 @@ public class ClsSQLiteUserRepository implements IUserRepository {
       ResultSet rs = pstmt.executeQuery();
 
       if (!rs.next()) {
-        throw new RuntimeException(
-            "Usuario o contraseña incorrectos. El usuario no existe en la base de datos.");
+        throw new RuntimeException("Usuario o contraseña incorrectos");
       }
 
       String roleType = rs.getString("ROLE_TYPE");
       String stateType = rs.getString("STATE_TYPE");
 
-      if ("ACTIVE".equals(stateType)) {
-        switch (roleType) {
-          case "ADMINISTRATOR":
-            return Role.ADMINISTRATOR;
-          case "PATIENT":
-            return Role.PATIENT;
-          case "CLINICALSTAFF":
-            return Role.CLINICALSTAFF;
-          case "APPOINTMENTMANAGER":
-            return Role.APPOINTMENTMANAGER;
-        }
-      } else {
-        // La excepción debe ser para un caso especifico (MODIFICAR)
-        throw new RuntimeException(
-            "Acceso denegado - Usuario BLOQUEADO");
+      if (!"ACTIVE".equals(stateType)) {
+        throw new RuntimeException("Usuario bloqueado");
       }
 
-      return null;
+      return Role.valueOf(roleType); 
 
     } catch (SQLException e) {
-      throw new RuntimeException("Error verificando el usuario. 500", e);
+      throw new RuntimeException("Error verificando usuario", e);
     }
   }
 
   @Override
-  public List<ClsUser> opFindAll() {
+  public List<ClsUser> opFindAll() { // Optenemos la lista completa de todos los usuarios
 
     String sql = """
-        SELECT  R.ROLE_TYPE, U.USER_USERNAME, U.USER_FULLNAME, S.STATE_TYPE
+        SELECT U.USER_ID, U.USER_USERNAME, U.USER_FULLNAME,
+        R.ROLE_TYPE, S.STATE_TYPE
         FROM USER U
         JOIN ROLE R ON U.USER_ROLE = R.ROLE_ID
         JOIN STATE S ON U.USER_STATE = S.STATE_ID
@@ -138,9 +187,10 @@ public class ClsSQLiteUserRepository implements IUserRepository {
       while (rs.next()) {
         ClsUser user = new ClsUser();
 
-        user.setAttRole(Role.valueOf(rs.getString("ROLE_TYPE")));
+        user.setAttId(rs.getLong("USER_ID"));
         user.setAttUsername(rs.getString("USER_USERNAME"));
         user.setAttFullname(rs.getString("USER_FULLNAME"));
+        user.setAttRole(Role.valueOf(rs.getString("ROLE_TYPE")));
         user.setAttState(State.valueOf(rs.getString("STATE_TYPE")));
 
         users.add(user);
@@ -149,7 +199,7 @@ public class ClsSQLiteUserRepository implements IUserRepository {
       return users;
 
     } catch (SQLException e) {
-      throw new RuntimeException("Error obteniendo los usuarios", e);
+      throw new RuntimeException("Error obteniendo usuarios", e);
     }
   }
 }

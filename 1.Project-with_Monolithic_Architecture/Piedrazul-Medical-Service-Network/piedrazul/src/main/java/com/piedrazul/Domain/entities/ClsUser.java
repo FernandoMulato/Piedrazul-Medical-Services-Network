@@ -16,12 +16,7 @@ public class ClsUser {
   protected Role attRole;
   protected State attState;
 
-  public ClsUser(
-      String prmUsername,
-      String prmFullname,
-      String prmPassword,
-      Role prmRole,
-      State prmState) {
+  public ClsUser(String prmUsername,String prmFullname,String prmPassword,Role prmRole,State prmState) {
     this.attUsername = prmUsername;
     this.attFullname = prmFullname;
     this.attPassword = prmPassword;
