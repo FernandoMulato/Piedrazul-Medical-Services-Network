@@ -9,12 +9,13 @@ public class LoginController {
 
   private LoginView loginView;
   private final IUserService userService;
+  private final UserController userController;
 
-  public LoginController(LoginView loginView , IUserService userService) {
+  public LoginController(LoginView loginView, IUserService userService, UserController userController) {
     this.loginView = loginView;
     this.userService = userService;
+    this.userController = userController;
 
-    // Escuchar botón login
     this.loginView.addLoginListener(e -> login());
   }
 
@@ -25,12 +26,11 @@ public class LoginController {
 
     try {
       Role roleUser = userService.opVerifyUser(username, password);
-      if (roleUser.equals(Role.Administrator)) {
+      if (roleUser.equals(Role.ADMINISTRATOR)) {
         loginView.dispose(); // cerrar login
 
         AdminPanelView adminPanel = new AdminPanelView();
-        new AdminPanelController(adminPanel, userService);
-
+        new AdminPanelController(adminPanel, userService, userController);
         adminPanel.setVisible(true);
       }
     } catch (Exception e) {

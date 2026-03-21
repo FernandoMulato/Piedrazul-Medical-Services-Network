@@ -3,16 +3,18 @@ package com.piedrazul.Presentation.controller;
 import com.piedrazul.Application.services.IUserService;
 import com.piedrazul.Presentation.views.AdminPanelView;
 import com.piedrazul.Presentation.views.LoginView;
+import com.piedrazul.Presentation.views.MainFrame;
 
 public class AdminPanelController {
 
   private AdminPanelView view;
   private final IUserService userService;
+  private final UserController userController;
 
-  public AdminPanelController(AdminPanelView view, IUserService userService) {
-
+  public AdminPanelController(AdminPanelView view, IUserService userService, UserController userController) {
     this.view = view;
     this.userService = userService;
+    this.userController = userController;
 
     view.addUsersListener(e -> manageUsers());
     view.addAppointmentsListener(e -> manageAppointments());
@@ -21,7 +23,9 @@ public class AdminPanelController {
   }
 
   private void manageUsers() {
-    System.out.println("Abrir gestión de usuarios");
+    view.dispose();
+    MainFrame mainFrame = new MainFrame(userController);
+    mainFrame.setVisible(true);
   }
 
   private void manageAppointments() {
@@ -37,8 +41,7 @@ public class AdminPanelController {
     view.dispose();
 
     LoginView login = new LoginView();
-    new LoginController(login, userService);
-
+    new LoginController(login, userService, userController);
     login.setVisible(true);
   }
 }
