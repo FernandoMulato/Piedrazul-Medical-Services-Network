@@ -16,10 +16,43 @@ import com.piedrazul.Domain.enums.State;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * SQLite implementation of the {@link IUserRepository} interface.
+ * <p>
+ * This class provides persistence operations for {@link ClsUser} entities
+ * using JDBC and a SQLite database. It encapsulates all database access
+ * logic related to users.
+ * </p>
+ *
+ * <p>
+ * It relies on {@link IDatabaseConnection} to obtain database connections,
+ * promoting loose coupling and adherence to the Dependency Inversion Principle
+ * (DIP).
+ * </p>
+ *
+ * <p>
+ * This implementation uses prepared statements to prevent SQL injection
+ * and ensure safe query execution.
+ * </p>
+ * 
+ * @author Henry Fernando Mulato Llanten
+ */
 @RequiredArgsConstructor
 public class ClsSQLiteUserRepository implements IUserRepository {
+
+  /**
+   * Database connection provider.
+   */
   private final IDatabaseConnection databaseConnection;
 
+  /**
+   * Persists a new user in the database.
+   *
+   * @param prmUser the user to be stored
+   * @return the persisted user with generated ID, or {@code null} if the
+   *         operation fails
+   * @throws RuntimeException if a database error occurs
+   */
   @Override
   public ClsUser opSave(ClsUser prmUser) {
     String sql = """
@@ -68,6 +101,24 @@ public class ClsSQLiteUserRepository implements IUserRepository {
     throw new UnsupportedOperationException("Unimplemented method 'opGet'");
   }
 
+  /**
+   * Verifies user credentials and returns the associated role.
+   * <p>
+   * This method performs authentication by validating the username
+   * and password against the database.
+   * </p>
+   *
+   * <p>
+   * If the user exists and is active, the corresponding {@link Role}
+   * is returned. Otherwise, a runtime exception is thrown.
+   * </p>
+   *
+   * @param username user's username
+   * @param password user's password
+   * @return the role associated with the authenticated user
+   * @throws RuntimeException if credentials are invalid, user is blocked,
+   *                          or a database error occurs
+   */
   @Override
   public Role opVerifyUser(String username, String password) throws RuntimeException {
 
@@ -119,6 +170,12 @@ public class ClsSQLiteUserRepository implements IUserRepository {
     }
   }
 
+  /**
+   * Retrieves all users from the database.
+   *
+   * @return list of users
+   * @throws RuntimeException if a database error occurs
+   */
   @Override
   public List<ClsUser> opFindAll() {
 

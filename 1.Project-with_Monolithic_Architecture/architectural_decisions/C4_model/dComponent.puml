@@ -7,7 +7,7 @@ Container(app, "Aplicación Desktop", "Java Desktop Swing") {
 
     Component(ui, "Capa de Presentación", "Swing (Views + Controllers)", "Interfaz gráfica y controladores que manejan eventos del usuario")
 
-    Component(appService, "Capa de Aplicación", "Servicios / Casos de Uso", "Orquesta la lógica del negocio y coordina operaciones")
+    Component(appService, "Capa de Servicios", "Servicios / Casos de Uso", "Orquesta la lógica del negocio y coordina operaciones")
 
     Component(domain, "Capa de Dominio", "Entidades y Reglas de Negocio", "Contiene la lógica central del negocio (Cita, Usuario, HistoriaClinica)")
 
