@@ -34,6 +34,17 @@ public class MainFrame extends JFrame implements IClinicObserver {
 
     refreshTable();
   }
+  private void openRegisterUserView() {
+    RegisterUserView registerView = new RegisterUserView();
+
+      registerView.addSaveListener(e -> {
+      JOptionPane.showMessageDialog(registerView,"Vista de registro creada correctamente.");
+  });
+
+  registerView.addCancelListener(e -> registerView.dispose());
+
+  registerView.setVisible(true);
+  }
 
   private JComponent buildLeft() {
     JPanel p = new JPanel(new BorderLayout(6, 6));
@@ -55,16 +66,20 @@ public class MainFrame extends JFrame implements IClinicObserver {
     p.add(new JScrollPane(table), BorderLayout.CENTER);
 
     JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    JButton btnNew = new JButton("Nuevo");
-    btnNew.addActionListener(e -> {
-      selectedId = 0;
-      form.clear();
-      lblStatus.setText("Nuevo registro.");
-    });
+    
+
+    JButton btnRegister = new JButton("Registrar");
+    btnRegister.addActionListener(e -> openRegisterUserView());
+
+    JButton btnUpdate = new JButton("Actualizar");
+
     JButton btnDelete = new JButton("Eliminar");
     btnDelete.addActionListener(e -> onDelete());
-    top.add(btnNew);
+
+    top.add(btnRegister);
+    top.add(btnUpdate);
     top.add(btnDelete);
+   
 
     p.add(top, BorderLayout.NORTH);
     return p;
