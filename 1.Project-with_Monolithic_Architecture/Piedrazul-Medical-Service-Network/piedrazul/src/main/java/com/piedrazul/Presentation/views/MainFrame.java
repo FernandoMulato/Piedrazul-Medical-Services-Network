@@ -5,6 +5,7 @@ import javax.swing.*;
 import com.piedrazul.Domain.core.events.ClsClinicEvent;
 import com.piedrazul.Domain.core.events.IClinicObserver;
 import com.piedrazul.Domain.core.events.ClinicEventType;
+import com.piedrazul.Presentation.controller.AdminPanelController;
 import com.piedrazul.Presentation.controller.UserController;
 
 import com.piedrazul.Domain.entities.ClsClinicalStaff;
@@ -14,6 +15,7 @@ import com.piedrazul.Domain.enums.Profession;
 import com.piedrazul.Domain.enums.Role;
 import com.piedrazul.Domain.enums.Specialty;
 import com.piedrazul.Domain.enums.State;
+
 
 import java.awt.*;
 
@@ -285,10 +287,30 @@ public class MainFrame extends JFrame implements IClinicObserver {
   private JComponent buildBottom() {
     JPanel p = new JPanel(new BorderLayout());
     p.setBorder(BorderFactory.createEmptyBorder(4, 8, 8, 8));
+
+    JButton btnBack = new JButton("Volver");
+
+    btnBack.addActionListener(e -> goBack());
+
     p.add(lblStatus, BorderLayout.CENTER);
+    p.add(btnBack, BorderLayout.EAST); // 🔥 botón a la derecha
+
     return p;
   }
 
+  private void goBack() {
+    this.dispose();
+
+    AdminPanelView adminPanel = new AdminPanelView();
+
+    new AdminPanelController(
+        adminPanel,
+        null,           
+        userController  
+    );
+
+    adminPanel.setVisible(true);
+  }
   private void onSave() {
     // El panel derecho (ClinicFormPanel) es solo para visualizar el usuario seleccionado.
     // Para registrar un nuevo usuario use el botón "Registrar".
