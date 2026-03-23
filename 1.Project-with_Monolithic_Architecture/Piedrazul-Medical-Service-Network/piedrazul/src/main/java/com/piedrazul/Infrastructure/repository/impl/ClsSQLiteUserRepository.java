@@ -15,9 +15,6 @@ import com.piedrazul.Infrastructure.config.IDatabaseConnection;
 import com.piedrazul.Infrastructure.repository.IUserRepository;
 import com.piedrazul.Domain.enums.Role;
 import com.piedrazul.Domain.enums.State;
-import com.piedrazul.Domain.entities.ClsClinicalStaff;
-import com.piedrazul.Domain.entities.ClsPatient;
-
 import lombok.RequiredArgsConstructor;
 
 /**

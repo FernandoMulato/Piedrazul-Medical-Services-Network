@@ -293,7 +293,7 @@ public class MainFrame extends JFrame implements IClinicObserver {
     btnBack.addActionListener(e -> goBack());
 
     p.add(lblStatus, BorderLayout.CENTER);
-    p.add(btnBack, BorderLayout.EAST); // 🔥 botón a la derecha
+    p.add(btnBack, BorderLayout.EAST); 
 
     return p;
   }
