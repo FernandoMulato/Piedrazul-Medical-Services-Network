@@ -42,84 +42,140 @@ public class MainFrame extends JFrame implements IClinicObserver {
 
     refreshTable();
   }
- 
-  private void openRegisterUserView() {
-  RegisterUserView registerView = new RegisterUserView();
 
-    registerView.addSaveListener(e -> {
-    try {
-      validateRoleSpecificFields(registerView);
-
-      ClsUser user = buildUserFromRegisterView(registerView);
-      userController.opCreateUser(user);
-
-      JOptionPane.showMessageDialog(registerView, "Usuario registrado correctamente.");
-      registerView.dispose();
-      refreshTable();
-
-    } catch (Exception ex) {
-      JOptionPane.showMessageDialog(
-        registerView,
-        ex.getMessage(),
-        "Error",
-        JOptionPane.ERROR_MESSAGE);
+  private void openUpdateUserView() {
+    if (selectedId == 0) {
+      JOptionPane.showMessageDialog(this, "Seleccione un usuario de la tabla para actualizar.");
+      return;
     }
-  });
 
-  registerView.addCancelListener(e -> registerView.dispose());
+    ClsUser user = userController.opGetUser(selectedId);
+    if (user == null) {
+      JOptionPane.showMessageDialog(this, "No se pudo obtener el usuario seleccionado.", "Error",
+          JOptionPane.ERROR_MESSAGE);
+      return;
+    }
 
-  registerView.setVisible(true);
+    UpdateUserView updateView = new UpdateUserView(user);
+
+    updateView.addSaveListener(e -> {
+      try {
+        ClsUser updated = buildUserFromUpdateView(updateView);
+        userController.opUpdateUser(updated);
+
+        refreshTable();
+        updateView.dispose();
+
+        JOptionPane.showMessageDialog(this, "Usuario actualizado correctamente.");
+      } catch (Exception ex) {
+        JOptionPane.showMessageDialog(updateView, ex.getMessage(), "Error de actualización",
+            JOptionPane.ERROR_MESSAGE);
+      }
+    });
+
+    updateView.addCancelListener(e -> updateView.dispose());
+    updateView.setVisible(true);
   }
 
-  private ClsUser buildUserFromRegisterView(RegisterUserView view) {
+  private ClsUser buildUserFromUpdateView(UpdateUserView view) {
     String username = view.getUsername();
     String fullname = view.getFullname();
     String password = view.getPassword();
-
     Role role = mapRole(view.getSelectedRole());
     State state = mapState(view.getSelectedState());
+    long id = view.getUserId();
+
+    ClsUser updated;
 
     if (role == Role.PATIENT) {
-      String citizenCardText = view.getCitizenCard();
+      long citizenCard = Long.parseLong(view.getCitizenCard());
       String phoneNumber = view.getPhoneNumber();
+      updated = new com.piedrazul.Domain.entities.ClsPatient(
+          username, fullname, password, role, state, citizenCard, phoneNumber);
+    } else if (role == Role.CLINICALSTAFF) {
+      com.piedrazul.Domain.enums.Profession profession = mapProfession(view.getSelectedProfession());
+      com.piedrazul.Domain.enums.Specialty specialty = mapSpecialty(view.getSelectedSpecialty());
+      updated = new com.piedrazul.Domain.entities.ClsClinicalStaff(
+          username, fullname, password, role, state, profession, specialty);
+    } else {
+      updated = new ClsUser(username, fullname, password, role, state);
+    }
 
-      long citizenCard = Long.parseLong(citizenCardText);
+    updated.setAttId(id);
+    return updated;
+  }
 
-      return new ClsPatient(
+  private void openRegisterUserView() {
+    RegisterUserView registerView = new RegisterUserView();
+
+    registerView.addSaveListener(e -> {
+      try {
+        ClsUser user = buildUserFromRegisterView(registerView);
+        userController.opCreateUser(user);
+
+        refreshTable();
+        registerView.dispose();
+
+        JOptionPane.showMessageDialog(
+            this,
+            "Usuario registrado correctamente.");
+      } catch (Exception ex) {
+        JOptionPane.showMessageDialog(
+            registerView,
+            ex.getMessage(),
+            "Error",
+            JOptionPane.ERROR_MESSAGE);
+      }
+    });
+
+    registerView.addCancelListener(e -> registerView.dispose());
+
+    registerView.setVisible(true);
+  }
+
+  private ClsUser buildUserFromRegisterView(RegisterUserView view) {
+  String username = view.getUsername();
+  String fullname = view.getFullname();
+  String password = view.getPassword();
+
+  Role role = mapRole(view.getSelectedRole());
+  State state = mapState(view.getSelectedState());
+
+  if (role == Role.PATIENT) {
+    long citizenCard = Long.parseLong(view.getCitizenCard());
+    String phoneNumber = view.getPhoneNumber();
+
+    return new ClsPatient(
         username,
         fullname,
         password,
         role,
         state,
         citizenCard,
-        phoneNumber
-      );
-    }
+        phoneNumber);
+  }
 
-    if (role == Role.CLINICALSTAFF) {
-      Profession profession = mapProfession(view.getSelectedProfession());
-      Specialty specialty = mapSpecialty(view.getSelectedSpecialty());
+  if (role == Role.CLINICALSTAFF) {
+    Profession profession = mapProfession(view.getSelectedProfession());
+    Specialty specialty = mapSpecialty(view.getSelectedSpecialty());
 
-      return new ClsClinicalStaff(
+    return new ClsClinicalStaff(
         username,
         fullname,
         password,
         role,
         state,
         profession,
-        specialty
-      );
-    }
+        specialty);
+  }
 
-    return new ClsUser(
+  return new ClsUser(
       username,
       fullname,
       password,
       role,
-      state
-    );
+      state);
   }
-
 
   private void validateRoleSpecificFields(RegisterUserView view) {
     Role role = mapRole(view.getSelectedRole());
@@ -137,15 +193,14 @@ public class MainFrame extends JFrame implements IClinicObserver {
     }
   }
 
-
   private Role mapRole(String roleText) {
-  return switch (roleText) {
-    case "ADMINISTRADOR" -> Role.ADMINISTRATOR;
-    case "PACIENTE" -> Role.PATIENT;
-    case "PERSONAL MEDICO" -> Role.CLINICALSTAFF;
-    case "AGENDADOR DE CITAS" -> Role.APPOINTMENTMANAGER;
-    default -> throw new IllegalArgumentException("Rol no válido");
-  };
+    return switch (roleText) {
+      case "ADMINISTRADOR" -> Role.ADMINISTRATOR;
+      case "PACIENTE" -> Role.PATIENT;
+      case "PERSONAL MEDICO" -> Role.CLINICALSTAFF;
+      case "AGENDADOR DE CITAS" -> Role.APPOINTMENTMANAGER;
+      default -> throw new IllegalArgumentException("Rol no válido");
+    };
   }
 
   private State mapState(String stateText) {
@@ -173,8 +228,6 @@ public class MainFrame extends JFrame implements IClinicObserver {
     };
   }
 
-
-
   private JComponent buildLeft() {
     JPanel p = new JPanel(new BorderLayout(6, 6));
     p.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
@@ -195,20 +248,19 @@ public class MainFrame extends JFrame implements IClinicObserver {
     p.add(new JScrollPane(table), BorderLayout.CENTER);
 
     JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    
 
     JButton btnRegister = new JButton("Registrar");
     btnRegister.addActionListener(e -> openRegisterUserView());
 
     JButton btnUpdate = new JButton("Actualizar");
+    btnUpdate.addActionListener(e -> openUpdateUserView());
 
-    JButton btnDeactivate= new JButton("Desactivar");
+    JButton btnDeactivate = new JButton("Desactivar");
     btnDeactivate.addActionListener(e -> onDeactivate());
 
     top.add(btnRegister);
     top.add(btnUpdate);
     top.add(btnDeactivate);
-   
 
     p.add(top, BorderLayout.NORTH);
     return p;
@@ -238,53 +290,40 @@ public class MainFrame extends JFrame implements IClinicObserver {
   }
 
   private void onSave() {
-    try {
-      String role = form.role();
-      String username = form.username();
-      String fullname = form.fullname();
-      String state = form.state();
-
-      if (role.isBlank() || username.isBlank() || fullname.isBlank() || state.isBlank()) {
-        JOptionPane.showMessageDialog(this, "Role, username, fullname and state are mandatory.");
-        return;
-      }
-
-      if (selectedId == 0) {
-        userController.opCreateUser(null);
-      } else {
-        userController.opCreateUser(null);
-      }
-    } catch (Exception ex) {
-      JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    // El panel derecho (ClinicFormPanel) es solo para visualizar el usuario seleccionado.
+    // Para registrar un nuevo usuario use el botón "Registrar".
+    // Para editar un usuario existente use el botón "Actualizar".
+    if (selectedId > 0) {
+      openUpdateUserView();
+    } else {
+      JOptionPane.showMessageDialog(this,
+          "Para registrar un usuario use el botón 'Registrar'.\nPara editar, seleccione un usuario y use 'Actualizar'.");
     }
   }
 
-  
   private void onDeactivate() {
 
     if (selectedId == 0) {
-        JOptionPane.showMessageDialog(this, "Seleccione un usuario.");
-        return;
+      JOptionPane.showMessageDialog(this, "Seleccione un usuario.");
+      return;
     }
 
     int confirm = JOptionPane.showConfirmDialog(
         this,
         "¿Desea desactivar este usuario?",
         "Confirmar",
-        JOptionPane.YES_NO_OPTION
-    );
+        JOptionPane.YES_NO_OPTION);
 
     if (confirm == JOptionPane.YES_OPTION) {
-        try {
-            userController.opDeactivateUser(selectedId);
-            refreshTable();
-            JOptionPane.showMessageDialog(this, "Usuario desactivado correctamente.");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
+      try {
+        userController.opDeactivateUser(selectedId);
+        refreshTable();
+        JOptionPane.showMessageDialog(this, "Usuario desactivado correctamente.");
+      } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, e.getMessage());
+      }
     }
   }
-
 
   private void refreshTable() {
     tableModel.setData(userController.opList());

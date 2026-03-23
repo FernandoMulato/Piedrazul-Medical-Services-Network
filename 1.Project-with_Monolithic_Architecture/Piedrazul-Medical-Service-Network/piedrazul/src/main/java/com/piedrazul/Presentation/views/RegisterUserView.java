@@ -20,11 +20,6 @@ public class RegisterUserView extends JFrame {
   // ADMINISTRATOR / APPOINTMENTMANAGER
   private final JPanel emptyPanel = new JPanel();
 
-  // PATIENT PANEL
-  private final JPanel panelPatientFields = buildPatientPanel();
-
-  // CLINICAL STAFF PANEL
-  private final JPanel panelClinicalFields = buildClinicalStaffPanel();
 
   // PATIENT
   private final JTextField txtCitizenCard = new JTextField(20);
@@ -33,6 +28,10 @@ public class RegisterUserView extends JFrame {
   // CLINICALSTAFF
   private final JComboBox<String> cmbProfession = new JComboBox<>(new String[] { "Medico", "Terapista" });
   private final JComboBox<String> cmbSpecialty = new JComboBox<>(new String[] { "Neurologia", "Quiropráctica", "Fisioterapia" });
+
+  // Paneles dinámicos — deben declararse DESPUÉS de los campos que usan
+  private final JPanel panelPatientFields = buildPatientPanel();
+  private final JPanel panelClinicalFields = buildClinicalStaffPanel();
 
   private final JButton btnSave = new JButton("Guardar");
   private final JButton btnCancel = new JButton("Cancelar");
@@ -70,8 +69,8 @@ public class RegisterUserView extends JFrame {
     addField(formPanel, c, row++, "Estado:", cmbState);
 
     dynamicPanel.add(emptyPanel, "ADMINISTRADOR");
-    dynamicPanel.add(buildPatientPanel(), "PACIENTE");
-    dynamicPanel.add(buildClinicalStaffPanel(), "PERSONAL MEDICO");
+    dynamicPanel.add(panelPatientFields, "PACIENTE");
+    dynamicPanel.add(panelClinicalFields, "PERSONAL MEDICO");
     dynamicPanel.add(new JPanel(), "AGENDADOR DE CITAS");
 
     c.gridx = 0;
@@ -189,12 +188,6 @@ public class RegisterUserView extends JFrame {
   return (String) cmbSpecialty.getSelectedItem();
   }
 
-  public boolean isPatientFieldsVisible() {
-  return panelPatientFields.isVisible();
-  }
-
-  public boolean isClinicalFieldsVisible() {
-  return panelClinicalFields.isVisible();
-  }
+  
 
 }
