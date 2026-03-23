@@ -20,6 +20,12 @@ public class RegisterUserView extends JFrame {
   // ADMINISTRATOR / APPOINTMENTMANAGER
   private final JPanel emptyPanel = new JPanel();
 
+  // PATIENT PANEL
+  private final JPanel panelPatientFields = buildPatientPanel();
+
+  // CLINICAL STAFF PANEL
+  private final JPanel panelClinicalFields = buildClinicalStaffPanel();
+
   // PATIENT
   private final JTextField txtCitizenCard = new JTextField(20);
   private final JTextField txtPhoneNumber = new JTextField(20);
@@ -145,4 +151,50 @@ public class RegisterUserView extends JFrame {
   public void addCancelListener(ActionListener listener) {
     btnCancel.addActionListener(listener);
   }
+
+  //Getters
+  public String getUsername() {
+    return txtUsername.getText().trim();
+  }
+
+  public String getFullname() {
+    return txtFullname.getText().trim();
+  }
+
+  public String getPassword() {
+    return new String(txtPassword.getPassword());
+  }
+
+  public String getSelectedRole() {
+    return (String) cmbRole.getSelectedItem();
+  }
+
+  public String getSelectedState() {
+    return (String) cmbState.getSelectedItem();
+  }
+
+  public String getCitizenCard() {
+    return txtCitizenCard.getText().trim();
+  }
+
+  public String getPhoneNumber() {
+  return txtPhoneNumber.getText().trim();
+  }
+
+  public String getSelectedProfession() {
+  return (String) cmbProfession.getSelectedItem();
+  }
+
+  public String getSelectedSpecialty() {
+  return (String) cmbSpecialty.getSelectedItem();
+  }
+
+  public boolean isPatientFieldsVisible() {
+  return panelPatientFields.isVisible();
+  }
+
+  public boolean isClinicalFieldsVisible() {
+  return panelClinicalFields.isVisible();
+  }
+
 }

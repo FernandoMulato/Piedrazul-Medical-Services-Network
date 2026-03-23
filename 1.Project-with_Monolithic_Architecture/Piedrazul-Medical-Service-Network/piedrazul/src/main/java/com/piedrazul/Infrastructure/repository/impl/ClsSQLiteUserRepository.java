@@ -15,6 +15,8 @@ import com.piedrazul.Infrastructure.config.IDatabaseConnection;
 import com.piedrazul.Infrastructure.repository.IUserRepository;
 import com.piedrazul.Domain.enums.Role;
 import com.piedrazul.Domain.enums.State;
+import com.piedrazul.Domain.entities.ClsClinicalStaff;
+import com.piedrazul.Domain.entities.ClsPatient;
 
 import lombok.RequiredArgsConstructor;
 
@@ -108,6 +110,36 @@ public class ClsSQLiteUserRepository implements IUserRepository {
     }
   }
 
+  private void savePatient(Connection conn, ClsPatient patient) throws SQLException {
+  String sql = """
+      INSERT INTO PATIENT(PAT_ID, PAT_CITIZENSHIPCARD, PAT_PHONENUMBER)
+      VALUES (?, ?, ?)
+      """;
+
+  try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    pstmt.setLong(1, patient.getAttId());
+    pstmt.setLong(2, patient.getAttCitizenshipCard());
+    pstmt.setString(3, patient.getAttPhoneNumber());
+
+    pstmt.executeUpdate();
+  }
+    }
+
+    private void saveMedicalStaff(Connection conn, ClsClinicalStaff staff) throws SQLException {
+  String sql = """
+      INSERT INTO MEDICALSTAFF(MED_ID, MED_PROFESSION, MED_SPECIALITY)
+      VALUES (?, ?, ?)
+      """;
+
+  try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    pstmt.setLong(1, staff.getAttId());
+    pstmt.setString(2, staff.getAttProfession().name());
+    pstmt.setString(3, staff.getAttSpecialty().name());
+
+    pstmt.executeUpdate();
+  }
+    }
+
   private void updatePatient(Connection conn, ClsPatient patient) throws SQLException {
 
     String sql = """
@@ -160,6 +192,29 @@ public class ClsSQLiteUserRepository implements IUserRepository {
         throw new RuntimeException("Error desactivando usuario", e);
     }
   }
+
+  @Override
+public boolean opExistsByUsername(String username) {
+  String sql = """
+      SELECT 1
+      FROM USER
+      WHERE USER_USERNAME = ?
+      LIMIT 1
+      """;
+
+  try (Connection conn = databaseConnection.connect();
+       PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+    pstmt.setString(1, username);
+
+    try (ResultSet rs = pstmt.executeQuery()) {
+      return rs.next();
+    }
+
+  } catch (SQLException e) {
+    throw new RuntimeException("Error verificando si el nombre de usuario existe", e);
+  }
+    }
 
   @Override
   public boolean opUpdate(ClsUser user) {

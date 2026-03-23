@@ -7,6 +7,14 @@ import com.piedrazul.Domain.core.events.IClinicObserver;
 import com.piedrazul.Domain.core.events.ClinicEventType;
 import com.piedrazul.Presentation.controller.UserController;
 
+import com.piedrazul.Domain.entities.ClsClinicalStaff;
+import com.piedrazul.Domain.entities.ClsPatient;
+import com.piedrazul.Domain.entities.ClsUser;
+import com.piedrazul.Domain.enums.Profession;
+import com.piedrazul.Domain.enums.Role;
+import com.piedrazul.Domain.enums.Specialty;
+import com.piedrazul.Domain.enums.State;
+
 import java.awt.*;
 
 public class MainFrame extends JFrame implements IClinicObserver {
@@ -34,17 +42,138 @@ public class MainFrame extends JFrame implements IClinicObserver {
 
     refreshTable();
   }
+ 
   private void openRegisterUserView() {
-    RegisterUserView registerView = new RegisterUserView();
+  RegisterUserView registerView = new RegisterUserView();
 
-      registerView.addSaveListener(e -> {
-      JOptionPane.showMessageDialog(registerView,"Vista de registro creada correctamente.");
+    registerView.addSaveListener(e -> {
+    try {
+      validateRoleSpecificFields(registerView);
+
+      ClsUser user = buildUserFromRegisterView(registerView);
+      userController.opCreateUser(user);
+
+      JOptionPane.showMessageDialog(registerView, "Usuario registrado correctamente.");
+      registerView.dispose();
+      refreshTable();
+
+    } catch (Exception ex) {
+      JOptionPane.showMessageDialog(
+        registerView,
+        ex.getMessage(),
+        "Error",
+        JOptionPane.ERROR_MESSAGE);
+    }
   });
 
   registerView.addCancelListener(e -> registerView.dispose());
 
   registerView.setVisible(true);
   }
+
+  private ClsUser buildUserFromRegisterView(RegisterUserView view) {
+    String username = view.getUsername();
+    String fullname = view.getFullname();
+    String password = view.getPassword();
+
+    Role role = mapRole(view.getSelectedRole());
+    State state = mapState(view.getSelectedState());
+
+    if (role == Role.PATIENT) {
+      String citizenCardText = view.getCitizenCard();
+      String phoneNumber = view.getPhoneNumber();
+
+      long citizenCard = Long.parseLong(citizenCardText);
+
+      return new ClsPatient(
+        username,
+        fullname,
+        password,
+        role,
+        state,
+        citizenCard,
+        phoneNumber
+      );
+    }
+
+    if (role == Role.CLINICALSTAFF) {
+      Profession profession = mapProfession(view.getSelectedProfession());
+      Specialty specialty = mapSpecialty(view.getSelectedSpecialty());
+
+      return new ClsClinicalStaff(
+        username,
+        fullname,
+        password,
+        role,
+        state,
+        profession,
+        specialty
+      );
+    }
+
+    return new ClsUser(
+      username,
+      fullname,
+      password,
+      role,
+      state
+    );
+  }
+
+
+  private void validateRoleSpecificFields(RegisterUserView view) {
+    Role role = mapRole(view.getSelectedRole());
+
+    if (role == Role.PATIENT) {
+      if (view.getCitizenCard().isBlank() || view.getPhoneNumber().isBlank()) {
+        throw new IllegalArgumentException("Para registrar un paciente debe ingresar cédula y teléfono.");
+      }
+    }
+
+    if (role == Role.CLINICALSTAFF) {
+      if (view.getSelectedProfession() == null || view.getSelectedSpecialty() == null) {
+        throw new IllegalArgumentException("Para registrar personal médico debe seleccionar profesión y especialidad.");
+      }
+    }
+  }
+
+
+  private Role mapRole(String roleText) {
+  return switch (roleText) {
+    case "ADMINISTRADOR" -> Role.ADMINISTRATOR;
+    case "PACIENTE" -> Role.PATIENT;
+    case "PERSONAL MEDICO" -> Role.CLINICALSTAFF;
+    case "AGENDADOR DE CITAS" -> Role.APPOINTMENTMANAGER;
+    default -> throw new IllegalArgumentException("Rol no válido");
+  };
+  }
+
+  private State mapState(String stateText) {
+    return switch (stateText) {
+      case "Activo" -> State.ACTIVE;
+      case "Inactivo" -> State.INACTIVE;
+      default -> throw new IllegalArgumentException("Estado no válido");
+    };
+  }
+
+  private Profession mapProfession(String professionText) {
+    return switch (professionText) {
+      case "Medico" -> Profession.MEDIC;
+      case "Terapista" -> Profession.THERAPIST;
+      default -> throw new IllegalArgumentException("Profesión no válida");
+    };
+  }
+
+  private Specialty mapSpecialty(String specialtyText) {
+    return switch (specialtyText) {
+      case "Neurologia" -> Specialty.NEURAL;
+      case "Quiropráctica" -> Specialty.CHIROPRACTIC;
+      case "Fisioterapia" -> Specialty.PHYSIO;
+      default -> throw new IllegalArgumentException("Especialidad no válida");
+    };
+  }
+
+
 
   private JComponent buildLeft() {
     JPanel p = new JPanel(new BorderLayout(6, 6));
