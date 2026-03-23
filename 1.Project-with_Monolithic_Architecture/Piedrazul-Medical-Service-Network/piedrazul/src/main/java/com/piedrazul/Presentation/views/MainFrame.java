@@ -73,12 +73,12 @@ public class MainFrame extends JFrame implements IClinicObserver {
 
     JButton btnUpdate = new JButton("Actualizar");
 
-    JButton btnDelete = new JButton("Eliminar");
-    btnDelete.addActionListener(e -> onDelete());
+    JButton btnDeactivate= new JButton("Desactivar");
+    btnDeactivate.addActionListener(e -> onDeactivate());
 
     top.add(btnRegister);
     top.add(btnUpdate);
-    top.add(btnDelete);
+    top.add(btnDeactivate);
    
 
     p.add(top, BorderLayout.NORTH);
@@ -130,23 +130,32 @@ public class MainFrame extends JFrame implements IClinicObserver {
     }
   }
 
-  private void onDelete() {
+  
+  private void onDeactivate() {
+
     if (selectedId == 0) {
-      JOptionPane.showMessageDialog(this, "Select an appointment to delete.");
-      return;
+        JOptionPane.showMessageDialog(this, "Seleccione un usuario.");
+        return;
     }
-    int ok = JOptionPane.showConfirmDialog(this, "Remove ID " + selectedId + "?", "Ok",
-        JOptionPane.YES_NO_OPTION);
-    if (ok == JOptionPane.YES_OPTION) {
-      try {
-        // userController.delete(selectedId);
-        selectedId = 0;
-        form.clear();
-      } catch (Exception ex) {
-        JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-      }
+
+    int confirm = JOptionPane.showConfirmDialog(
+        this,
+        "¿Desea desactivar este usuario?",
+        "Confirmar",
+        JOptionPane.YES_NO_OPTION
+    );
+
+    if (confirm == JOptionPane.YES_OPTION) {
+        try {
+            userController.opDeactivateUser(selectedId);
+            refreshTable();
+            JOptionPane.showMessageDialog(this, "Usuario desactivado correctamente.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
     }
   }
+
 
   private void refreshTable() {
     tableModel.setData(userController.opList());

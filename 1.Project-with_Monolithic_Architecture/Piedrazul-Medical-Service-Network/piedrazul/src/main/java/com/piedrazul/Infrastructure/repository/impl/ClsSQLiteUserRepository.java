@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.piedrazul.Domain.entities.ClsClinicalStaff;
+import com.piedrazul.Domain.entities.ClsPatient;
 import com.piedrazul.Domain.entities.ClsUser;
 import com.piedrazul.Infrastructure.config.IDatabaseConnection;
 import com.piedrazul.Infrastructure.repository.IUserRepository;
@@ -53,79 +55,167 @@ public class ClsSQLiteUserRepository implements IUserRepository {
    *         operation fails
    * @throws RuntimeException if a database error occurs
    */
+  
+
   @Override
   public ClsUser opSave(ClsUser prmUser) {
-    String sql = """
+    String sqlUser = """
         INSERT INTO USER(USER_USERNAME, USER_FULLNAME, USER_PASSWORD, USER_ROLE, USER_STATE)
         VALUES (?, ?, ?, ?, ?)
         """;
 
-    try (Connection conn = databaseConnection.connect();
-        PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+    try (Connection conn = databaseConnection.connect()) {
+        conn.setAutoCommit(false);
 
-      pstmt.setString(1, prmUser.getAttUsername());
-      pstmt.setString(2, prmUser.getAttFullname());
-      pstmt.setString(3, prmUser.getAttPassword());
-      pstmt.setInt(4, prmUser.getAttRole().getId());   // Aquí se da el mapeo de enum con ID
-      pstmt.setInt(5, prmUser.getAttState().getId());  // Igual aquí
+        try (PreparedStatement pstmt = conn.prepareStatement(sqlUser, Statement.RETURN_GENERATED_KEYS)) {
 
-      int rowsAffected = pstmt.executeUpdate();
+            pstmt.setString(1, prmUser.getAttUsername());
+            pstmt.setString(2, prmUser.getAttFullname());
+            pstmt.setString(3, prmUser.getAttPassword());
+            pstmt.setInt(4, prmUser.getAttRole().getId());
+            pstmt.setInt(5, prmUser.getAttState().getId());
 
-      if (rowsAffected > 0) {
-        ResultSet rs = pstmt.getGeneratedKeys();
-        if (rs.next()) {
-          prmUser.setAttId(rs.getLong(1));
+            int rowsAffected = pstmt.executeUpdate();
+
+            if (rowsAffected <= 0) {
+                conn.rollback();
+                return null;
+            }
+
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                prmUser.setAttId(rs.getLong(1));
+            }
+
+            if (prmUser instanceof ClsPatient patient) {
+                savePatient(conn, patient);
+            } else if (prmUser instanceof ClsClinicalStaff staff) {
+                saveMedicalStaff(conn, staff);
+            }
+
+            conn.commit();
+            return prmUser;
+
+        } catch (Exception e) {
+            conn.rollback();
+            throw e;
+        } finally {
+            conn.setAutoCommit(true);
         }
-        return prmUser;
-      }
 
-      return null;
+    } catch (Exception e) {
+        throw new RuntimeException("Error saving user", e);
+    }
+  }
 
-    } catch (SQLException e) {
-      throw new RuntimeException("Error saving user", e);
+  private void updatePatient(Connection conn, ClsPatient patient) throws SQLException {
+
+    String sql = """
+        UPDATE PATIENT
+        SET PAT_CITIZENSHIPCARD = ?, PAT_PHONENUMBER = ?
+        WHERE PAT_ID = ?
+        """;
+
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        pstmt.setLong(1, patient.getAttCitizenshipCard());
+        pstmt.setString(2, patient.getAttPhoneNumber());
+        pstmt.setLong(3, patient.getAttId());
+
+        pstmt.executeUpdate();
+    }
+  }
+
+  private void updateMedicalStaff(Connection conn, ClsClinicalStaff staff) throws SQLException {
+
+    String sql = """
+        UPDATE MEDICALSTAFF
+        SET MED_PROFESSION = ?, MED_SPECIALITY = ?
+        WHERE MED_ID = ?
+        """;
+
+    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        pstmt.setString(1, staff.getAttProfession().name());
+        pstmt.setString(2, staff.getAttSpecialty().name());
+        pstmt.setLong(3, staff.getAttId());
+
+        pstmt.executeUpdate();
     }
   }
 
   @Override
-  public boolean opDelete(long id) {
-    String sql = "DELETE FROM USER WHERE USER_ID = ?";
+  public boolean opDeactivate(long id) {
+    String sql = "UPDATE USER SET USER_STATE = ? WHERE USER_ID = ?";
 
     try (Connection conn = databaseConnection.connect();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-      pstmt.setLong(1, id);
-      return pstmt.executeUpdate() > 0;
+        pstmt.setInt(1, State.INACTIVE.getId());
+        pstmt.setLong(2, id);
+
+        return pstmt.executeUpdate() > 0;
 
     } catch (SQLException e) {
-      throw new RuntimeException("Error eliminando usuario", e);
+        throw new RuntimeException("Error desactivando usuario", e);
     }
   }
 
   @Override
   public boolean opUpdate(ClsUser user) {
-    String sql = """
+
+    String sqlUser = """
         UPDATE USER
         SET USER_USERNAME = ?, USER_FULLNAME = ?, USER_PASSWORD = ?, USER_ROLE = ?, USER_STATE = ?
         WHERE USER_ID = ?
         """;
 
-    try (Connection conn = databaseConnection.connect();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    try (Connection conn = databaseConnection.connect()) {
 
-      pstmt.setString(1, user.getAttUsername());
-      pstmt.setString(2, user.getAttFullname());
-      pstmt.setString(3, user.getAttPassword());
-      pstmt.setInt(4, user.getAttRole().getId());   // / Aquí se da el mapeo de enum con ID
-      pstmt.setInt(5, user.getAttState().getId());  // Igual aquí
-      pstmt.setLong(6, user.getAttId());
+        conn.setAutoCommit(false); // 🔥 INICIO TRANSACCIÓN
 
-      return pstmt.executeUpdate() > 0;
+        try (PreparedStatement pstmt = conn.prepareStatement(sqlUser)) {
 
-    } catch (SQLException e) {
-      throw new RuntimeException("Error actualizando usuario", e);
+            // --- actualizar tabla USER ---
+            pstmt.setString(1, user.getAttUsername());
+            pstmt.setString(2, user.getAttFullname());
+            pstmt.setString(3, user.getAttPassword());
+            pstmt.setInt(4, user.getAttRole().getId());
+            pstmt.setInt(5, user.getAttState().getId());
+            pstmt.setLong(6, user.getAttId());
+
+            int rows = pstmt.executeUpdate();
+
+            if (rows <= 0) {
+                conn.rollback();
+                return false;
+            }
+
+            // --- si es PACIENTE ---
+            if (user instanceof ClsPatient patient) {
+                updatePatient(conn, patient);
+            }
+
+            // --- si es PERSONAL MEDICO ---
+            else if (user instanceof ClsClinicalStaff staff) {
+                updateMedicalStaff(conn, staff);
+            }
+
+            conn.commit(); // 🔥 TODO OK
+            return true;
+
+        } catch (Exception e) {
+            conn.rollback(); // 🔥 ERROR → REVERSA TODO
+            throw e;
+        } finally {
+            conn.setAutoCommit(true);
+        }
+
+    } catch (Exception e) {
+        throw new RuntimeException("Error actualizando usuario", e);
     }
   }
-
+ 
   @Override
   public ClsUser opGet(long id) {
     String sql = """
@@ -182,13 +272,16 @@ public class ClsSQLiteUserRepository implements IUserRepository {
    *                          or a database error occurs
    */
   @Override
-  public Role opVerifyUser(String username, String password) { // Verificamos el usuario con su contraseña 
+  public Role opVerifyUser(String username, String password) {
+
     String sql = """
         SELECT R.ROLE_TYPE, S.STATE_TYPE
         FROM USER U
         JOIN ROLE R ON U.USER_ROLE = R.ROLE_ID
         JOIN STATE S ON U.USER_STATE = S.STATE_ID
-        WHERE U.USER_USERNAME = ? AND U.USER_PASSWORD = ?
+        WHERE U.USER_USERNAME = ?
+          AND U.USER_PASSWORD = ?
+          AND S.STATE_TYPE = 'ACTIVE'
         """;
 
     try (Connection conn = databaseConnection.connect();
@@ -200,17 +293,12 @@ public class ClsSQLiteUserRepository implements IUserRepository {
       ResultSet rs = pstmt.executeQuery();
 
       if (!rs.next()) {
-        throw new RuntimeException("Usuario o contraseña incorrectos");
+        throw new RuntimeException("Usuario o contraseña incorrectos o usuario inactivo");
       }
 
       String roleType = rs.getString("ROLE_TYPE");
-      String stateType = rs.getString("STATE_TYPE");
 
-      if (!"ACTIVE".equals(stateType)) {
-        throw new RuntimeException("Usuario bloqueado");
-      }
-
-      return Role.valueOf(roleType); 
+      return Role.valueOf(roleType);
 
     } catch (SQLException e) {
       throw new RuntimeException("Error verificando usuario", e);
