@@ -77,4 +77,9 @@ public interface IUserRepository {
    *                          invalid
    */
   Role opVerifyUser(String username, String password) throws RuntimeException;
+
+  boolean opDeactivate(long id);
+  boolean opExistsByUsername(String username);
+  boolean opUpdateState(long id, int stateId);
+
 }
