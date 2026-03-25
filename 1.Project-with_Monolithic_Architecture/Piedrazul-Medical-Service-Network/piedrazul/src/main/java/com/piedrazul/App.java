@@ -2,6 +2,10 @@ package com.piedrazul;
 
 import javax.swing.SwingUtilities;
 
+import com.piedrazul.Infrastructure.config.impl.SQLiteConnection;
+import com.piedrazul.Infrastructure.repository.IAppointmentRepository;
+import com.piedrazul.Infrastructure.repository.impl.ClsAppointmentRepository;
+import com.piedrazul.Presentation.controller.AppointmentController;
 import com.piedrazul.Application.services.IUserService;
 import com.piedrazul.Application.services.impl.ClsUserServiceImpl;
 import com.piedrazul.Domain.core.events.ClsClinicEventBus;
