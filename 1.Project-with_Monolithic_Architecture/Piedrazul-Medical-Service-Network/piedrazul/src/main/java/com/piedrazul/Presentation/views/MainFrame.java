@@ -179,22 +179,6 @@ public class MainFrame extends JFrame implements IClinicObserver {
       state);
   }
 
-  private void validateRoleSpecificFields(RegisterUserView view) {
-    Role role = mapRole(view.getSelectedRole());
-
-    if (role == Role.PATIENT) {
-      if (view.getCitizenCard().isBlank() || view.getPhoneNumber().isBlank()) {
-        throw new IllegalArgumentException("Para registrar un paciente debe ingresar cédula y teléfono.");
-      }
-    }
-
-    if (role == Role.CLINICALSTAFF) {
-      if (view.getSelectedProfession() == null || view.getSelectedSpecialty() == null) {
-        throw new IllegalArgumentException("Para registrar personal médico debe seleccionar profesión y especialidad.");
-      }
-    }
-  }
-
   private Role mapRole(String roleText) {
     return switch (roleText) {
       case "ADMINISTRADOR" -> Role.ADMINISTRATOR;

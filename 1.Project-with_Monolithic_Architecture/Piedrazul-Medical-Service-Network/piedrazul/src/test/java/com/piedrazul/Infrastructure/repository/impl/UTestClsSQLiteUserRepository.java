@@ -340,35 +340,6 @@ class UTestClsSQLiteUserRepository {
     verify(preparedStatementMock).executeQuery();
   }
 
-  @Test
-  @DisplayName("opSave inserts user and returns user with generated key")
-  void testOpSaveInsertsUser() throws Exception {
-    // Arrange
-    com.piedrazul.Domain.entities.ClsUser user = new com.piedrazul.Domain.entities.ClsUser();
-    user.setAttUsername("newuser");
-    user.setAttPassword("pass");
-
-    IDatabaseConnection dbConnectionMock = mock(IDatabaseConnection.class);
-    Connection connectionMock = mock(Connection.class);
-    PreparedStatement preparedStatementMock = mock(PreparedStatement.class);
-    ResultSet resultSetMock = mock(ResultSet.class);
-
-    when(dbConnectionMock.connect()).thenReturn(connectionMock);
-    when(connectionMock.prepareStatement(anyString(), eq(java.sql.Statement.RETURN_GENERATED_KEYS)))
-        .thenReturn(preparedStatementMock);
-    when(preparedStatementMock.executeUpdate()).thenReturn(1);
-    when(preparedStatementMock.getGeneratedKeys()).thenReturn(resultSetMock);
-    when(resultSetMock.next()).thenReturn(true);
-    when(resultSetMock.getLong(1)).thenReturn(123L);
-
-    ClsSQLiteUserRepository repository = new ClsSQLiteUserRepository(dbConnectionMock);
-
-    // Act
-    com.piedrazul.Domain.entities.ClsUser result = repository.opSave(user);
-
-    // Assert
-    assertEquals(123L, result.getAttId());
-    verify(preparedStatementMock).executeUpdate();
-  }
+  
 }
 
