@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -311,6 +312,67 @@ class UTestClsSQLiteUserRepository {
     assertEquals("Error verificando el usuario. 500", thrown.getMessage());
     verify(preparedStatementMock).setString(1, username);
     verify(preparedStatementMock).setString(2, password);
+  }
+
+  @Test
+  @DisplayName("opFindAll returns list of users from database")
+  void testOpFindAllReturnsUsers() throws Exception {
+    // Arrange
+    IDatabaseConnection dbConnectionMock = mock(IDatabaseConnection.class);
+    Connection connectionMock = mock(Connection.class);
+    PreparedStatement preparedStatementMock = mock(PreparedStatement.class);
+    ResultSet resultSetMock = mock(ResultSet.class);
+
+    when(dbConnectionMock.connect()).thenReturn(connectionMock);
+    when(connectionMock.prepareStatement(anyString())).thenReturn(preparedStatementMock);
+    when(preparedStatementMock.executeQuery()).thenReturn(resultSetMock);
+
+    when(resultSetMock.next()).thenReturn(true, false);
+    when(resultSetMock.getString("ROLE_TYPE")).thenReturn("PATIENT");
+    when(resultSetMock.getString("USER_USERNAME")).thenReturn("testuser");
+    when(resultSetMock.getString("USER_FULLNAME")).thenReturn("Test User");
+    when(resultSetMock.getString("STATE_TYPE")).thenReturn("ACTIVE");
+
+    ClsSQLiteUserRepository repository = new ClsSQLiteUserRepository(dbConnectionMock);
+
+    // Act
+    java.util.List<com.piedrazul.Domain.entities.ClsUser> result = repository.opFindAll();
+
+    // Assert
+    assertEquals(1, result.size());
+    assertEquals("testuser", result.get(0).getAttUsername());
+    verify(preparedStatementMock).executeQuery();
+  }
+
+  @Test
+  @DisplayName("opSave inserts user and returns user with generated key")
+  void testOpSaveInsertsUser() throws Exception {
+    // Arrange
+    com.piedrazul.Domain.entities.ClsUser user = new com.piedrazul.Domain.entities.ClsUser();
+    user.setAttUsername("newuser");
+    user.setAttPassword("pass");
+
+    IDatabaseConnection dbConnectionMock = mock(IDatabaseConnection.class);
+    Connection connectionMock = mock(Connection.class);
+    PreparedStatement preparedStatementMock = mock(PreparedStatement.class);
+    ResultSet resultSetMock = mock(ResultSet.class);
+
+    when(dbConnectionMock.connect()).thenReturn(connectionMock);
+    when(connectionMock.prepareStatement(anyString(), eq(java.sql.Statement.RETURN_GENERATED_KEYS)))
+        .thenReturn(preparedStatementMock);
+    when(preparedStatementMock.executeUpdate()).thenReturn(1);
+    when(preparedStatementMock.getGeneratedKeys()).thenReturn(resultSetMock);
+    when(resultSetMock.next()).thenReturn(true);
+    when(resultSetMock.getLong(1)).thenReturn(123L);
+
+    ClsSQLiteUserRepository repository = new ClsSQLiteUserRepository(dbConnectionMock);
+
+    // Act
+    com.piedrazul.Domain.entities.ClsUser result = repository.opSave(user);
+
+    // Assert
+    assertEquals(123L, result.getAttId());
+    verify(preparedStatementMock).executeUpdate();
   }
 }
 

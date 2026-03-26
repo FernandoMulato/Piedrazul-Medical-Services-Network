@@ -14,7 +14,7 @@ class UTestClinicEventType {
 
   @Test
   @DisplayName("USER_CHANGE enum value exists and has correct name (normal case)")
-  void userChangeEnumValueExists() {
+  void testUserChangeEnumValueExists() {
     // Arrange & Act
     ClinicEventType type = ClinicEventType.USER_CHANGE;
 
@@ -25,7 +25,7 @@ class UTestClinicEventType {
 
   @Test
   @DisplayName("STATUS_MESSAGE enum value exists and has correct name (normal case)")
-  void statusMessageEnumValueExists() {
+  void testStatusMessageEnumValueExists() {
     // Arrange & Act
     ClinicEventType type = ClinicEventType.STATUS_MESSAGE;
 
@@ -36,7 +36,7 @@ class UTestClinicEventType {
 
   @Test
   @DisplayName("valueOf returns correct enum for USER_CHANGE string (normal case)")
-  void valueOfReturnsUserChangeForValidString() {
+  void testValueOfReturnsUserChangeForValidString() {
     // Arrange
     String typeName = "USER_CHANGE";
 
@@ -49,7 +49,7 @@ class UTestClinicEventType {
 
   @Test
   @DisplayName("valueOf returns correct enum for STATUS_MESSAGE string (normal case)")
-  void valueOfReturnsStatusMessageForValidString() {
+  void testValueOfReturnsStatusMessageForValidString() {
     // Arrange
     String typeName = "STATUS_MESSAGE";
 
@@ -62,7 +62,7 @@ class UTestClinicEventType {
 
   @Test
   @DisplayName("valueOf with invalid name throws IllegalArgumentException (error case)")
-  void valueOfThrowsForInvalidName() {
+  void testValueOfThrowsForInvalidName() {
     // Arrange
     String invalidName = "INVALID_TYPE";
 
@@ -72,7 +72,7 @@ class UTestClinicEventType {
 
   @Test
   @DisplayName("values returns array with exactly two elements (borderline case)")
-  void valuesReturnsAllEnumConstants() {
+  void testValuesReturnsAllEnumConstants() {
     // Act
     ClinicEventType[] values = ClinicEventType.values();
 

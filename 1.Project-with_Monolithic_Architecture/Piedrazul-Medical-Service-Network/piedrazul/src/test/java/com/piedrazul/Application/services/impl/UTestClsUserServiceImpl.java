@@ -83,4 +83,41 @@ class UTestClsUserServiceImpl {
     assertEquals("Repository error", thrown.getMessage());
     verify(userRepositoryMock).opVerifyUser(username, password);
   }
+
+  @Test
+  @DisplayName("opList returns list of users from repository")
+  void testOpListReturnsUsersFromRepository() {
+    // Arrange
+    IUserRepository userRepositoryMock = mock(IUserRepository.class);
+    ClsClinicEventBus eventBusMock = mock(ClsClinicEventBus.class);
+    java.util.List<com.piedrazul.Domain.entities.ClsUser> expectedUsers = java.util.Collections.emptyList();
+    when(userRepositoryMock.opFindAll()).thenReturn(expectedUsers);
+
+    ClsUserServiceImpl service = new ClsUserServiceImpl(userRepositoryMock, eventBusMock);
+
+    // Act
+    java.util.List<com.piedrazul.Domain.entities.ClsUser> result = service.opList();
+
+    // Assert
+    assertEquals(expectedUsers, result);
+    verify(userRepositoryMock).opFindAll();
+  }
+
+  @Test
+  @DisplayName("opCreateUser calls eventBus.subscribe(null) and returns null (placeholder test)")
+  void testOpCreateUserReturnsNullAndCallsEventBus() {
+    // Arrange
+    IUserRepository userRepositoryMock = mock(IUserRepository.class);
+    ClsClinicEventBus eventBusMock = mock(ClsClinicEventBus.class);
+    com.piedrazul.Domain.entities.ClsUser user = new com.piedrazul.Domain.entities.ClsUser();
+
+    ClsUserServiceImpl service = new ClsUserServiceImpl(userRepositoryMock, eventBusMock);
+
+    // Act
+    com.piedrazul.Domain.entities.ClsUser result = service.opCreateUser(user);
+
+    // Assert
+    assertNull(result);
+    verify(eventBusMock).subscribe(null);
+  }
 }
