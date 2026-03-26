@@ -31,7 +31,7 @@ class UTestClsClinicEventBus {
 
   @Test
   @DisplayName("Subscribe and publish - single observer receives event (normal case)")
-  void subscribeAndPublishSingleObserverReceivesEvent() {
+  void testSubscribeAndPublishSingleObserverReceivesEvent() {
     // Arrange
     IClinicObserver observer = mock(IClinicObserver.class);
     ClsClinicEvent event = new ClsClinicEvent(ClinicEventType.USER_CHANGE, "User updated");
@@ -46,7 +46,7 @@ class UTestClsClinicEventBus {
 
   @Test
   @DisplayName("Subscribe multiple observers - all receive published event (normal case)")
-  void subscribeMultipleObserversAllReceiveEvent() {
+  void testSubscribeMultipleObserversAllReceiveEvent() {
     // Arrange
     IClinicObserver observer1 = mock(IClinicObserver.class);
     IClinicObserver observer2 = mock(IClinicObserver.class);
@@ -64,7 +64,7 @@ class UTestClsClinicEventBus {
 
   @Test
   @DisplayName("Unsubscribe - observer no longer receives events (normal case)")
-  void unsubscribeObserverNoLongerReceivesEvents() {
+  void testUnsubscribeObserverNoLongerReceivesEvents() {
     // Arrange
     IClinicObserver observer = mock(IClinicObserver.class);
     ClsClinicEvent event = new ClsClinicEvent(ClinicEventType.USER_CHANGE, "User changed");
@@ -80,7 +80,7 @@ class UTestClsClinicEventBus {
 
   @Test
   @DisplayName("Subscribe null observer - does not add and publish does not fail (borderline case)")
-  void subscribeNullObserverDoesNotAdd() {
+  void testSubscribeNullObserverDoesNotAdd() {
     // Arrange
     IClinicObserver observer = mock(IClinicObserver.class);
     ClsClinicEvent event = new ClsClinicEvent(ClinicEventType.STATUS_MESSAGE, "Test");
@@ -96,7 +96,7 @@ class UTestClsClinicEventBus {
 
   @Test
   @DisplayName("Publish with zero observers - does not throw (borderline case)")
-  void publishWithZeroObserversDoesNotThrow() {
+  void testPublishWithZeroObserversDoesNotThrow() {
     // Arrange
     ClsClinicEvent event = new ClsClinicEvent(ClinicEventType.USER_CHANGE, "No observers");
 
@@ -106,7 +106,7 @@ class UTestClsClinicEventBus {
 
   @Test
   @DisplayName("Unsubscribe observer that was never subscribed - does not throw (borderline case)")
-  void unsubscribeNonSubscribedObserverDoesNotThrow() {
+  void testUnsubscribeNonSubscribedObserverDoesNotThrow() {
     // Arrange
     IClinicObserver observer = mock(IClinicObserver.class);
 
@@ -116,7 +116,7 @@ class UTestClsClinicEventBus {
 
   @Test
   @DisplayName("Subscribe same observer twice - receives event twice (borderline case)")
-  void subscribeSameObserverTwiceReceivesEventTwice() {
+  void testSubscribeSameObserverTwiceReceivesEventTwice() {
     // Arrange
     IClinicObserver observer = mock(IClinicObserver.class);
     ClsClinicEvent event = new ClsClinicEvent(ClinicEventType.USER_CHANGE, "Duplicate");
@@ -132,7 +132,7 @@ class UTestClsClinicEventBus {
 
   @Test
   @DisplayName("Observer throwing exception propagates and stops notification to remaining observers (error case)")
-  void observerThrowingExceptionPropagates() {
+  void testObserverThrowingExceptionPropagates() {
     // Arrange
     IClinicObserver failingObserver = mock(IClinicObserver.class);
     IClinicObserver succeedingObserver = mock(IClinicObserver.class);
@@ -152,7 +152,7 @@ class UTestClsClinicEventBus {
 
   @Test
   @DisplayName("Publish null event passes null to observer (error/borderline case)")
-  void publishNullEventPassesNullToObserver() {
+  void testPublishNullEventPassesNullToObserver() {
     // Arrange
     IClinicObserver observer = mock(IClinicObserver.class);
     eventBus.subscribe(observer);
@@ -166,7 +166,7 @@ class UTestClsClinicEventBus {
 
   @Test
   @DisplayName("IClinicObserver implementation receives event via onEvent (normal case)")
-  void clinicObserverImplementationReceivesEvent() {
+  void testClinicObserverImplementationReceivesEvent() {
     // Arrange - concrete implementation capturing events
     List<ClsClinicEvent> receivedEvents = new ArrayList<>();
     IClinicObserver observer = event -> receivedEvents.add(event);
