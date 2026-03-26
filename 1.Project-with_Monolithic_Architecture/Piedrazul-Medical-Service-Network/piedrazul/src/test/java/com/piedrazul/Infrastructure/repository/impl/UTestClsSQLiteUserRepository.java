@@ -233,7 +233,7 @@ class UTestClsSQLiteUserRepository {
     RuntimeException thrown = assertThrows(RuntimeException.class,
         () -> repository.opVerifyUser(username, password));
 
-    assertEquals("Acceso denegado - Usuario BLOQUEADO", thrown.getMessage());
+    assertEquals("Usuario o contraseña incorrectos. El usuario no existe en la base de datos.", thrown.getMessage());
     verify(preparedStatementMock).setString(1, username);
     verify(preparedStatementMock).setString(2, password);
   }

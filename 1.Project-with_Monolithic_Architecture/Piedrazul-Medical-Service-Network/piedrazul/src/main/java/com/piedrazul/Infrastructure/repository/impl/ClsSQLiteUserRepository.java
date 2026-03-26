@@ -15,9 +15,6 @@ import com.piedrazul.Infrastructure.config.IDatabaseConnection;
 import com.piedrazul.Infrastructure.repository.IUserRepository;
 import com.piedrazul.Domain.enums.Role;
 import com.piedrazul.Domain.enums.State;
-import com.piedrazul.Domain.entities.ClsClinicalStaff;
-import com.piedrazul.Domain.entities.ClsPatient;
-
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -354,7 +351,7 @@ public class ClsSQLiteUserRepository implements IUserRepository {
             ResultSet rs = pstmt.executeQuery();
 
             if (!rs.next()) {
-                throw new RuntimeException("Usuario o contraseña incorrectos o usuario inactivo");
+                throw new RuntimeException("Usuario o contraseña incorrectos. El usuario no existe en la base de datos.");
             }
 
             String roleType = rs.getString("ROLE_TYPE");
