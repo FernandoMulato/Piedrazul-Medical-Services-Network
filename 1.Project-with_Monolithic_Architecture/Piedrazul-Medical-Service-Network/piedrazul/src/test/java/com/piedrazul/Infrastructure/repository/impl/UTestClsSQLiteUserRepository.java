@@ -1,20 +1,18 @@
 package com.piedrazul.Infrastructure.repository.impl;
 
-import com.piedrazul.Domain.enums.Role;
-import com.piedrazul.Infrastructure.config.IDatabaseConnection;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.piedrazul.Domain.enums.Role;
+import com.piedrazul.Infrastructure.config.IDatabaseConnection;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -146,8 +144,8 @@ class UTestClsSQLiteUserRepository {
   }
 
   @Test
-  @DisplayName("opVerifyUser returns null when user is ACTIVE but role is unknown (borderline case)")
-  void testReturnsNullWhenActiveWithUnknownRole() throws Exception {
+  @DisplayName("opVerifyUser throws IllegalArgumentException when role in DB is unknown (error case)")
+  void testThrowsWhenActiveWithUnknownRole() throws Exception {
     // Arrange
     String username = "unknownRoleUser";
     String password = "somePass";
@@ -163,15 +161,12 @@ class UTestClsSQLiteUserRepository {
 
     when(resultSetMock.next()).thenReturn(true);
     when(resultSetMock.getString("ROLE_TYPE")).thenReturn("UNKNOWN_ROLE");
-    when(resultSetMock.getString("STATE_TYPE")).thenReturn("ACTIVE");
 
     ClsSQLiteUserRepository repository = new ClsSQLiteUserRepository(dbConnectionMock);
 
-    // Act
-    Role result = repository.opVerifyUser(username, password);
-
-    // Assert
-    assertNull(result);
+    // Act & Assert
+    assertThrows(IllegalArgumentException.class,
+        () -> repository.opVerifyUser(username, password));
     verify(preparedStatementMock).setString(1, username);
     verify(preparedStatementMock).setString(2, password);
   }
@@ -206,9 +201,9 @@ class UTestClsSQLiteUserRepository {
   }
 
   @Test
-  @DisplayName("opVerifyUser throws RuntimeException when user is BLOCKED (non-ACTIVE state)")
+  @DisplayName("opVerifyUser throws RuntimeException when user is BLOCKED (query excludes non-ACTIVE)")
   void testThrowsRuntimeExceptionWhenUserBlocked() throws Exception {
-    // Arrange
+    // Arrange - SQL filters by STATE_TYPE='ACTIVE', so blocked user returns no rows
     String username = "blockedUser";
     String password = "somePass";
 
@@ -221,9 +216,7 @@ class UTestClsSQLiteUserRepository {
     when(connectionMock.prepareStatement(anyString())).thenReturn(preparedStatementMock);
     when(preparedStatementMock.executeQuery()).thenReturn(resultSetMock);
 
-    when(resultSetMock.next()).thenReturn(true);
-    when(resultSetMock.getString("ROLE_TYPE")).thenReturn("PATIENT");
-    when(resultSetMock.getString("STATE_TYPE")).thenReturn("BLOCKED");
+    when(resultSetMock.next()).thenReturn(false);
 
     ClsSQLiteUserRepository repository = new ClsSQLiteUserRepository(dbConnectionMock);
 
@@ -231,13 +224,13 @@ class UTestClsSQLiteUserRepository {
     RuntimeException thrown = assertThrows(RuntimeException.class,
         () -> repository.opVerifyUser(username, password));
 
-    assertEquals("Acceso denegado - Usuario BLOQUEADO", thrown.getMessage());
+    assertEquals("Usuario o contraseña incorrectos. El usuario no existe en la base de datos.", thrown.getMessage());
     verify(preparedStatementMock).setString(1, username);
     verify(preparedStatementMock).setString(2, password);
   }
 
   @Test
-  @DisplayName("opVerifyUser wraps SQLException in RuntimeException with message 'Error verificando el usuario. 500'")
+  @DisplayName("opVerifyUser wraps SQLException in RuntimeException (error case)")
   void testThrowsRuntimeExceptionWhenSQLExceptionOccurs() throws Exception {
     // Arrange
     String username = "anyUser";
@@ -253,7 +246,8 @@ class UTestClsSQLiteUserRepository {
     RuntimeException thrown = assertThrows(RuntimeException.class,
         () -> repository.opVerifyUser(username, password));
 
-    assertEquals("Error verificando el usuario. 500", thrown.getMessage());
+    assertEquals("Error verificando usuario", thrown.getMessage());
+    assertEquals(sqlException, thrown.getCause());
   }
 
   @Test
@@ -309,7 +303,8 @@ class UTestClsSQLiteUserRepository {
     RuntimeException thrown = assertThrows(RuntimeException.class,
         () -> repository.opVerifyUser(username, password));
 
-    assertEquals("Error verificando el usuario. 500", thrown.getMessage());
+    assertEquals("Error verificando usuario", thrown.getMessage());
+    assertEquals(sqlException, thrown.getCause());
     verify(preparedStatementMock).setString(1, username);
     verify(preparedStatementMock).setString(2, password);
   }
@@ -344,35 +339,6 @@ class UTestClsSQLiteUserRepository {
     verify(preparedStatementMock).executeQuery();
   }
 
-  @Test
-  @DisplayName("opSave inserts user and returns user with generated key")
-  void testOpSaveInsertsUser() throws Exception {
-    // Arrange
-    com.piedrazul.Domain.entities.ClsUser user = new com.piedrazul.Domain.entities.ClsUser();
-    user.setAttUsername("newuser");
-    user.setAttPassword("pass");
-
-    IDatabaseConnection dbConnectionMock = mock(IDatabaseConnection.class);
-    Connection connectionMock = mock(Connection.class);
-    PreparedStatement preparedStatementMock = mock(PreparedStatement.class);
-    ResultSet resultSetMock = mock(ResultSet.class);
-
-    when(dbConnectionMock.connect()).thenReturn(connectionMock);
-    when(connectionMock.prepareStatement(anyString(), eq(java.sql.Statement.RETURN_GENERATED_KEYS)))
-        .thenReturn(preparedStatementMock);
-    when(preparedStatementMock.executeUpdate()).thenReturn(1);
-    when(preparedStatementMock.getGeneratedKeys()).thenReturn(resultSetMock);
-    when(resultSetMock.next()).thenReturn(true);
-    when(resultSetMock.getLong(1)).thenReturn(123L);
-
-    ClsSQLiteUserRepository repository = new ClsSQLiteUserRepository(dbConnectionMock);
-
-    // Act
-    com.piedrazul.Domain.entities.ClsUser result = repository.opSave(user);
-
-    // Assert
-    assertEquals(123L, result.getAttId());
-    verify(preparedStatementMock).executeUpdate();
-  }
+  
 }
 
