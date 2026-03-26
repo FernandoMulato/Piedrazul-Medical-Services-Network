@@ -26,8 +26,7 @@ public class SQLiteConnection implements IDatabaseConnection {
   /**
    * JDBC connection URL for the SQLite database.
    */
-  // private static final String URL = "jdbc:sqlite:database.db";
-  private static final String URL = "jdbc:sqlite:E:/Semestre ##6/Software Engineering ll/Proyecto_final_piedra_azul/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/database.db";
+  private static final String URL = "jdbc:sqlite:database.db";
 
   /**
    * Default constructor.

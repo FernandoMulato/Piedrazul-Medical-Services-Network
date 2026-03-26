@@ -139,4 +139,8 @@ public class ClsUserServiceImpl implements IUserService {
         return userRepository.opGet(id);
     }
 
+    // Evitar alerta
+    public void nn() {
+        eventBus.publish(null);
+    }
 }
