@@ -3,24 +3,22 @@
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
 
 abstract User <<abstract>> #Pink;line:Black;line.dotted;text:gray {
-  # id: long 
-  # username: String
-  # fullname: String
-  # password: String
-  # role: Role
-  # state: State
-  ' <<Constructor>> +User(): void 
+  <<Own>> #id: long 
+  <<Own>> #username: String
+  <<Own>> #fullname: String
+  <<Own>> #password: String
+  <<Own>> #role: Role
+  <<Own>> #state: State
 }
 
 class Patient <<entity>> #LightYellow;line:Black;text:Black extends User {
-  - citizenshipCard: long
-  - phoneNumber: String
-  ' <<Constructor>> +User(): void 
+  <<Own>> -citizenshipCard: long
+  <<Own>> -phoneNumber: String
 } 
 
 abstract ClinicalStaff <<abstract>> #Pink;line:Black;line.dotted;text:gray extends User {
-  # profession: Profession
-  # specialty: Specialty
+  <<Own>> #profession: Profession
+  <<Own>> #specialty: Specialty
 }
 
 class Medic <<entity>> #LightYellow;line:Black;text:Black extends ClinicalStaff {}
@@ -68,6 +66,23 @@ enum AttentionType <<enumeration>> #LightBlue;line:Black;text:Black {
   Specialized
 }
 
+class ClinicEvent <<observer pattern>> #PaleGreen;line:Black;text:Black {
+
+}
+
+class ClinicEventBus <<observer pattern>> #PaleGreen;line:Black;text:Black {
+
+}
+
+interface IClinicObserver <<interface>> #aliceblue;line:blue;text:blue {
+
+}
+
+enum ClinicEventType <<enumeration>> #LightBlue;line:Black;text:Black {
+  AppointmentChanged
+  StatusMessage
+}
+
 User ..> Role
 User ..> State 
 
@@ -75,5 +90,8 @@ ClinicalStaff ..> Profession
 ClinicalStaff ..> Specialty
 
 Appointment ..> AttentionType
+
+ClinicEvent -> ClinicEventType
+ClinicEventBus "1..1" o-- "0..*" IClinicObserver : has
 
 @enduml

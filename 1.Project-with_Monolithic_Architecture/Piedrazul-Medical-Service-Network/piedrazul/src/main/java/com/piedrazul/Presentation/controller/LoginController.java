@@ -2,15 +2,20 @@ package com.piedrazul.Presentation.controller;
 
 import com.piedrazul.Presentation.views.AdminPanelView;
 import com.piedrazul.Presentation.views.LoginView;
+import com.piedrazul.Application.services.IUserService;
+import com.piedrazul.Domain.enums.Role;
 
 public class LoginController {
 
   private LoginView loginView;
+  private final IUserService userService;
+  private final UserController userController;
 
-  public LoginController(LoginView loginView) {
+  public LoginController(LoginView loginView, IUserService userService, UserController userController) {
     this.loginView = loginView;
+    this.userService = userService;
+    this.userController = userController;
 
-    // Escuchar botón login
     this.loginView.addLoginListener(e -> login());
   }
 
@@ -19,20 +24,18 @@ public class LoginController {
     String username = loginView.getUsername();
     String password = loginView.getPassword();
 
-    // Aquí luego conectarás tu servicio o base de datos
-    if (username.equals("admin") && password.equals("1234")) {
+    try {
+      Role roleUser = userService.opVerifyUser(username, password);
+      if (roleUser.equals(Role.ADMINISTRATOR)) {
+        loginView.dispose(); // cerrar login
 
-      loginView.dispose(); // cerrar login
-
-      AdminPanelView adminPanel = new AdminPanelView();
-      new AdminPanelController(adminPanel);
-
-      adminPanel.setVisible(true);
-
-    } else {
-
-      loginView.showMessage("Usuario o contraseña incorrectos");
-
+        AdminPanelView adminPanel = new AdminPanelView();
+        new AdminPanelController(adminPanel, userService, userController);
+        adminPanel.setVisible(true);
+      }
+    } catch (Exception e) {
+      loginView.showMessage(e.getMessage());
+      return;
     }
   }
 }

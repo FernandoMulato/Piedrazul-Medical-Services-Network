@@ -4,9 +4,11 @@ import com.piedrazul.Domain.enums.Role;
 import com.piedrazul.Domain.enums.State;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-public abstract class ClsUser {
+@NoArgsConstructor
+public class ClsUser {
   protected long attId;
   protected String attUsername;
   protected String attFullname;

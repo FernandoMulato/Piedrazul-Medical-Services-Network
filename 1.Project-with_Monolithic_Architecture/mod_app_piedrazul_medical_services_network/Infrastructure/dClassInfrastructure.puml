@@ -28,8 +28,17 @@ abstract User<Domain Layer> <<abstract>> #Pink;line:Black;line.dotted;text:gray 
   # state: State
 }
 
+enum Role<Domain Layer> <<enumeration>> #LightBlue;line:Black;text:Black {
+  Administrator
+  Patient
+  ClinicalStaff
+  AppointmentManager
+}
+
 IUserRepository ..> User
 SQLiteUserRepository ..> IDateBaseConnection
 SQLiteUserRepository..> User
+IUserRepository ..> Role
+SQLiteUserRepository ..> Role
 
 @enduml
