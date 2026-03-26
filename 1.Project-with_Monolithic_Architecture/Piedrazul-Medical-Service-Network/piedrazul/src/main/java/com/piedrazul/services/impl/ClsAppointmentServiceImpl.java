@@ -1,12 +1,12 @@
-package com.piedrazul.Application.services.impl;
+package com.piedrazul.services.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import com.piedrazul.Application.services.IAppointmentService;
 import com.piedrazul.Domain.entities.ClsAppointment;
 import com.piedrazul.Domain.enums.AttentionType;
 import com.piedrazul.Infrastructure.repository.IAppointmentRepository;
+import com.piedrazul.services.IAppointmentService;
 
 import lombok.RequiredArgsConstructor;
 

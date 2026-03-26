@@ -10,11 +10,11 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import com.piedrazul.Application.services.IAppointmentService;
-import com.piedrazul.Application.services.impl.ClsAppointmentServiceImpl;
 import com.piedrazul.Domain.entities.ClsAppointment;
 import com.piedrazul.Domain.enums.AttentionType;
 import com.piedrazul.Presentation.views.AppointmentView;
+import com.piedrazul.services.IAppointmentService;
+import com.piedrazul.services.impl.ClsAppointmentServiceImpl;
 
 public class AppointmentController {
 

@@ -11,7 +11,7 @@ import java.util.List;
 import com.piedrazul.Domain.entities.ClsClinicalStaff;
 import com.piedrazul.Domain.entities.ClsPatient;
 import com.piedrazul.Domain.entities.ClsUser;
-import com.piedrazul.Infrastructure.config.IDatabaseConnection;
+import com.piedrazul.Infrastructure.repository.IDatabaseConnection;
 import com.piedrazul.Infrastructure.repository.IUserRepository;
 import com.piedrazul.Domain.enums.Role;
 import com.piedrazul.Domain.enums.State;

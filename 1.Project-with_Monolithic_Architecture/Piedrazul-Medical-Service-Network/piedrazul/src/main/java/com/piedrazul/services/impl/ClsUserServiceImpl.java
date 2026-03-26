@@ -1,14 +1,14 @@
-package com.piedrazul.Application.services.impl;
+package com.piedrazul.services.impl;
 
 import java.util.List;
 
-import com.piedrazul.Application.services.IUserService;
 import com.piedrazul.Domain.core.events.ClsClinicEventBus;
 import com.piedrazul.Domain.entities.ClsClinicalStaff;
 import com.piedrazul.Domain.entities.ClsPatient;
 import com.piedrazul.Domain.entities.ClsUser;
 import com.piedrazul.Domain.enums.Role;
 import com.piedrazul.Infrastructure.repository.IUserRepository;
+import com.piedrazul.services.IUserService;
 
 import lombok.RequiredArgsConstructor;
 

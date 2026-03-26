@@ -14,8 +14,8 @@ import java.util.List;
 import com.piedrazul.Domain.entities.ClsAppointment;
 import com.piedrazul.Domain.enums.AppointmentStatus;
 import com.piedrazul.Domain.enums.AttentionType;
-import com.piedrazul.Infrastructure.config.IDatabaseConnection;
 import com.piedrazul.Infrastructure.repository.IAppointmentRepository;
+import com.piedrazul.Infrastructure.repository.IDatabaseConnection;
 
 import lombok.RequiredArgsConstructor;
 

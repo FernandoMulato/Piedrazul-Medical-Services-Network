@@ -6,7 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.piedrazul.Domain.enums.Role;
-import com.piedrazul.Infrastructure.config.IDatabaseConnection;
+import com.piedrazul.Infrastructure.repository.IDatabaseConnection;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

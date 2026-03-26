@@ -1,4 +1,4 @@
-package com.piedrazul.Infrastructure.config;
+package com.piedrazul.Infrastructure.repository;
 
 import java.sql.Connection;
 import java.sql.SQLException;

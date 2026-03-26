@@ -1,10 +1,10 @@
-package com.piedrazul.Infrastructure.config.impl;
+package com.piedrazul.Infrastructure.repository.impl;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import com.piedrazul.Infrastructure.config.IDatabaseConnection;
+import com.piedrazul.Infrastructure.repository.IDatabaseConnection;
 
 /**
  * SQLite implementation of the {@link IDatabaseConnection} interface.

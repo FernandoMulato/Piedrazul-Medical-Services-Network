@@ -2,8 +2,8 @@ package com.piedrazul.Presentation.controller;
 
 import java.util.List;
 
-import com.piedrazul.Application.services.IUserService;
 import com.piedrazul.Domain.entities.ClsUser;
+import com.piedrazul.services.IUserService;
 
 import lombok.RequiredArgsConstructor;
 
