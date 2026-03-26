@@ -13,7 +13,7 @@ class UTestClsClinicEvent {
 
   @Test
   @DisplayName("Constructor stores USER_CHANGE type and message correctly (normal case)")
-  void constructorStoresUserChangeTypeAndMessageCorrectly() {
+  void testConstructorStoresUserChangeTypeAndMessageCorrectly() {
     // Arrange
     ClinicEventType expectedType = ClinicEventType.USER_CHANGE;
     String expectedMessage = "User profile updated";
@@ -29,7 +29,7 @@ class UTestClsClinicEvent {
 
   @Test
   @DisplayName("Constructor stores STATUS_MESSAGE type and message correctly (normal case)")
-  void constructorStoresStatusMessageTypeAndMessageCorrectly() {
+  void testConstructorStoresStatusMessageTypeAndMessageCorrectly() {
     // Arrange
     ClinicEventType expectedType = ClinicEventType.STATUS_MESSAGE;
     String expectedMessage = "Operation completed successfully";
@@ -45,7 +45,7 @@ class UTestClsClinicEvent {
 
   @Test
   @DisplayName("Constructor accepts empty message (borderline case)")
-  void constructorAcceptsEmptyMessage() {
+  void testConstructorAcceptsEmptyMessage() {
     // Arrange
     ClinicEventType type = ClinicEventType.USER_CHANGE;
     String emptyMessage = "";
@@ -61,7 +61,7 @@ class UTestClsClinicEvent {
 
   @Test
   @DisplayName("Constructor accepts null message (borderline case)")
-  void constructorAcceptsNullMessage() {
+  void testConstructorAcceptsNullMessage() {
     // Arrange
     ClinicEventType type = ClinicEventType.STATUS_MESSAGE;
 
@@ -76,7 +76,7 @@ class UTestClsClinicEvent {
 
   @Test
   @DisplayName("Constructor accepts long message (borderline case)")
-  void constructorAcceptsLongMessage() {
+  void testConstructorAcceptsLongMessage() {
     // Arrange
     ClinicEventType type = ClinicEventType.STATUS_MESSAGE;
     String longMessage = "A".repeat(10000);
@@ -92,7 +92,7 @@ class UTestClsClinicEvent {
 
   @Test
   @DisplayName("Event is immutable - getters return same values as constructor args")
-  void eventIsImmutableGettersReturnConstructorValues() {
+  void testEventIsImmutableGettersReturnConstructorValues() {
     // Arrange
     ClinicEventType type = ClinicEventType.USER_CHANGE;
     String message = "Immutable test";
