@@ -3,7 +3,7 @@ package com.piedrazul.Presentation.controller;
 import com.piedrazul.Presentation.views.AdminPanelView;
 import com.piedrazul.Presentation.views.LoginView;
 import com.piedrazul.Presentation.views.MainFrame;
-import com.piedrazul.services.IUserService;
+import com.piedrazul.Services.IUserService;
 
 public class AdminPanelController {
 

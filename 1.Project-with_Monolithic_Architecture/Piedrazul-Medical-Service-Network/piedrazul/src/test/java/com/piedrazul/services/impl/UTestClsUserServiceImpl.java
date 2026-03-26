@@ -3,6 +3,7 @@ package com.piedrazul.services.impl;
 import com.piedrazul.Domain.core.events.ClsClinicEventBus;
 import com.piedrazul.Domain.enums.Role;
 import com.piedrazul.Infrastructure.repository.IUserRepository;
+import com.piedrazul.Services.impl.ClsUserServiceImpl;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

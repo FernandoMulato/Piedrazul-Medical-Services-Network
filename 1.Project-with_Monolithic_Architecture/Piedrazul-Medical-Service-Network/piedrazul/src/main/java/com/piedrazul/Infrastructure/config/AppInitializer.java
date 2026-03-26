@@ -10,8 +10,8 @@ import com.piedrazul.Infrastructure.repository.impl.SQLiteConnection;
 import com.piedrazul.Presentation.controller.LoginController;
 import com.piedrazul.Presentation.controller.UserController;
 import com.piedrazul.Presentation.views.LoginView;
-import com.piedrazul.services.IUserService;
-import com.piedrazul.services.impl.ClsUserServiceImpl;
+import com.piedrazul.Services.IUserService;
+import com.piedrazul.Services.impl.ClsUserServiceImpl;
 
 public class AppInitializer {
 

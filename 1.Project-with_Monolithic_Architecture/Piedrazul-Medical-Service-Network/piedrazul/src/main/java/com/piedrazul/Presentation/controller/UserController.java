@@ -3,7 +3,7 @@ package com.piedrazul.Presentation.controller;
 import java.util.List;
 
 import com.piedrazul.Domain.entities.ClsUser;
-import com.piedrazul.services.IUserService;
+import com.piedrazul.Services.IUserService;
 
 import lombok.RequiredArgsConstructor;
 
