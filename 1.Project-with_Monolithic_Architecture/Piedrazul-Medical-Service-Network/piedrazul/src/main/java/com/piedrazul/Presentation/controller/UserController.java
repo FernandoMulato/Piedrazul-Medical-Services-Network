@@ -24,4 +24,16 @@ public class UserController {
     return userService.opCreateUser(prmUser);
   }
 
+  public boolean opUpdateUser(ClsUser prmUser) {
+    return userService.opUpdateUser(prmUser);
+  }
+
+  public boolean opDeactivateUser(long id) {
+    return userService.opDeactivateUser(id);
+  }
+
+  public ClsUser opGetUser(long id) {
+    return userService.opGetUser(id);
+  }
+
 }

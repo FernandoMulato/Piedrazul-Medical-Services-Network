@@ -16,6 +16,8 @@ import static org.mockito.Mockito.when;
 
 class UTestClsUserServiceImpl {
 
+  // --- opVerifyUser (existing) ---
+
   @Test
   @DisplayName("opVerifyUser returns role from repository for valid credentials")
   void testReturnsRoleFromRepositoryForValidCredentials() {
@@ -103,21 +105,4 @@ class UTestClsUserServiceImpl {
     verify(userRepositoryMock).opFindAll();
   }
 
-  @Test
-  @DisplayName("opCreateUser calls eventBus.subscribe(null) and returns null (placeholder test)")
-  void testOpCreateUserReturnsNullAndCallsEventBus() {
-    // Arrange
-    IUserRepository userRepositoryMock = mock(IUserRepository.class);
-    ClsClinicEventBus eventBusMock = mock(ClsClinicEventBus.class);
-    com.piedrazul.Domain.entities.ClsUser user = new com.piedrazul.Domain.entities.ClsUser();
-
-    ClsUserServiceImpl service = new ClsUserServiceImpl(userRepositoryMock, eventBusMock);
-
-    // Act
-    com.piedrazul.Domain.entities.ClsUser result = service.opCreateUser(user);
-
-    // Assert
-    assertNull(result);
-    verify(eventBusMock).subscribe(null);
-  }
 }
