@@ -1,31 +1,29 @@
 package com.piedrazul.Presentation.controller;
 
 import java.awt.Component;
-import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import com.piedrazul.Application.services.IAppointmentService;
+import com.piedrazul.Application.services.impl.ClsAppointmentServiceImpl;
 import com.piedrazul.Domain.entities.ClsAppointment;
-import com.piedrazul.Domain.enums.AppointmentStatus;
 import com.piedrazul.Domain.enums.AttentionType;
-import com.piedrazul.Infrastructure.repository.IAppointmentRepository;
 import com.piedrazul.Presentation.views.AppointmentView;
 
 public class AppointmentController {
-    private AppointmentView appointmentView;
-    private IAppointmentRepository appointmentRepository;
 
-    public AppointmentController(AppointmentView view, IAppointmentRepository repository) {  
+    private final AppointmentView appointmentView;
+    private final IAppointmentService appointmentService;
+
+    public AppointmentController(AppointmentView view, IAppointmentService service) {
         this.appointmentView = view;
-        this.appointmentRepository = repository;
+        this.appointmentService = service;
         view.addScheduleListener(e -> opSchedule());
         view.addReScheduleListener(e -> opReSchedule());
         view.addExportListener(e -> opExport());
@@ -37,9 +35,9 @@ public class AppointmentController {
     private void opSchedule() {
         try {
             if (appointmentView.getPatientID().trim().isEmpty()
-                || appointmentView.getPhoneNumber().trim().isEmpty()
-                || appointmentView.getMedID().trim().isEmpty()
-                || appointmentView.getReason().trim().isEmpty()) {
+                    || appointmentView.getPhoneNumber().trim().isEmpty()
+                    || appointmentView.getMedID().trim().isEmpty()
+                    || appointmentView.getReason().trim().isEmpty()) {
                 appointmentView.showDialog("Error: Todos los campos son obligatorios.");
                 return;
             }
@@ -51,35 +49,22 @@ public class AppointmentController {
             String especialidad = appointmentView.getEspecialidad();
             String reason = appointmentView.getReason();
 
-            AttentionType attType = "Neuroterapia".equals(especialidad)
-                ? AttentionType.SPECIALIZED
-                : AttentionType.GENERAL;
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            String dateTimeStr = sdf.format(dateTime);
-
-            if (appointmentRepository.opCheckScheduleConflict(medID, dateTimeStr)) {
-                appointmentView.showDialog("Error: El profesional ya tiene una cita programada en ese horario.");
-                return;
-            }
+            AttentionType attType = ClsAppointmentServiceImpl.resolveAttentionType(especialidad);
 
             ClsAppointment appointment = new ClsAppointment(
-                patientID, phoneNumber, medID, dateTime, attType, reason
-            );
+                    patientID, phoneNumber, medID, dateTime, attType, reason);
 
-            ClsAppointment created = appointmentRepository.opCreate(appointment);
+            ClsAppointment created = appointmentService.opSchedule(appointment);
 
-            if (created != null && created.getAttId() > 0) {
-                appointmentView.showDialog("¡Cita agendada exitosamente! ID: " + created.getAttId());
-                opClearSchedule();
-            } else {
-                appointmentView.showDialog("Error: No se pudo guardar la cita.");
-            }
+            appointmentView.showDialog("¡Cita agendada exitosamente! ID: " + created.getAttId());
+            opClearSchedule();
 
         } catch (NumberFormatException e) {
             appointmentView.showDialog("Error: Los campos de ID deben ser numericos.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            appointmentView.showDialog("Error: " + e.getMessage());
         } catch (Exception e) {
-            appointmentView.showDialog("Ha ocurrido un error, por favor verifique los datos diligenciados e intente nuevamente." + e.toString());
+            appointmentView.showDialog("Ha ocurrido un error: " + e.getMessage());
         }
     }
 
@@ -92,35 +77,15 @@ public class AppointmentController {
             }
 
             long appointmentId = Long.parseLong(appointmentIdStr);
-
-            ClsAppointment existing = appointmentRepository.opView(appointmentId);
-            if (existing == null) {
-                appointmentView.showDialog("Error: No se encontró la cita con ID " + appointmentId + ".");
-                return;
-            }
-
             java.util.Date newDateTime = appointmentView.getReScheduleDate();
             String medIdStr = appointmentView.getMedID();
-            long newMedId = medIdStr.trim().isEmpty() ? existing.getAttMedicalStaffId() : Long.parseLong(medIdStr);
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-            String newDateTimeStr = sdf.format(newDateTime);
-
-            if (appointmentRepository.opCheckScheduleConflict(newMedId, newDateTimeStr)) {
-                appointmentView.showDialog("Error: El profesional ya tiene una cita programada en ese horario.");
-                return;
-            }
-
-            existing.setAttDateAndTime(newDateTime);
-            existing.setAttMedicalStaffId(newMedId);
-            existing.setAttStatus(AppointmentStatus.RESCHEDULED);
-
+            long newMedId = medIdStr.trim().isEmpty() ? 0 : Long.parseLong(medIdStr);
             String newReason = appointmentView.getReason();
-            if (newReason != null && !newReason.trim().isEmpty()) {
-                existing.setAttReason(newReason);
-            }
 
-            boolean updated = appointmentRepository.opUpdate(existing);
+            ClsAppointment patch = new ClsAppointment(0, null, newMedId, newDateTime, null, newReason);
+            patch.setAttId(appointmentId);
+
+            boolean updated = appointmentService.opReSchedule(patch);
 
             if (updated) {
                 appointmentView.showDialog("¡Cita reagendada exitosamente! Estado: REAGENDADA");
@@ -131,6 +96,8 @@ public class AppointmentController {
 
         } catch (NumberFormatException e) {
             appointmentView.showDialog("Error: Los campos de ID deben ser numericos.");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            appointmentView.showDialog("Error: " + e.getMessage());
         } catch (Exception e) {
             appointmentView.showDialog("Error al reagendar: " + e.getMessage());
         }
@@ -140,23 +107,16 @@ public class AppointmentController {
         try {
             String appointmentIdStr = appointmentView.getAppointmentId();
             if (appointmentIdStr == null || appointmentIdStr.trim().isEmpty()) {
-                appointmentView.showDialog("Error: Ingrese el ID de la cita a reagendar.");
+                appointmentView.showDialog("Error: Ingrese el ID de la cita a buscar.");
                 return;
             }
 
             long appointmentId = Long.parseLong(appointmentIdStr);
-            ClsAppointment appointment = appointmentRepository.opView(appointmentId);
+            ClsAppointment appointment = appointmentService.opFindAppointment(appointmentId);
 
-            if (appointment == null) {
-                appointmentView.showDialog("Error: No se encontro la cita con ID " + appointmentId + ".");
-                return;
-            }
-
-            // Populate table
-            DefaultTableModel model = new DefaultTableModel(
-                new Object[]{"ID Cita", "ID Paciente", "Teléfono", "ID Medico", "Fecha Hora", "Tipo", "Estado", "Motivo"}, 0);
-            
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            DefaultTableModel model = new DefaultTableModel(
+                    new Object[]{"ID Cita", "ID Paciente", "Teléfono", "ID Medico", "Fecha Hora", "Tipo", "Estado", "Motivo"}, 0);
             model.addRow(new Object[]{
                 appointment.getAttId(),
                 appointment.getAttCitizenshipCardPatient(),
@@ -169,14 +129,14 @@ public class AppointmentController {
             });
 
             appointmentView.setScheduleInfoTableModel(model);
-
-            // Populate reschedule fields
             appointmentView.setMedID(String.valueOf(appointment.getAttMedicalStaffId()));
             appointmentView.setReScheduleDate(appointment.getAttDateAndTime());
             appointmentView.setReason(appointment.getAttReason());
 
         } catch (NumberFormatException e) {
             appointmentView.showDialog("Error: El ID debe ser numerico.");
+        } catch (IllegalArgumentException e) {
+            appointmentView.showDialog("Error: " + e.getMessage());
         } catch (Exception e) {
             appointmentView.showDialog("Error inesperado: " + e.getMessage());
         }
@@ -184,7 +144,7 @@ public class AppointmentController {
 
     private void opExport() {
         try {
-            List<ClsAppointment> appointments = appointmentRepository.opListAll();
+            List<ClsAppointment> appointments = appointmentService.opListAll();
 
             if (appointments.isEmpty()) {
                 appointmentView.showDialog("No hay citas registradas para exportar.");
@@ -199,15 +159,14 @@ public class AppointmentController {
 
                 for (ClsAppointment app : appointments) {
                     writer.write(String.format("%d,%d,%s,%d,%s,%s,%s,%s\n",
-                        app.getAttId(),
-                        app.getAttCitizenshipCardPatient(),
-                        app.getAttPhoneNumber(),
-                        app.getAttMedicalStaffId(),
-                        exportSdf.format(app.getAttDateAndTime()),
-                        app.getAttAttentionType(),
-                        app.getAttStatus(),
-                        app.getAttReason().replace(",", ";")
-                    ));
+                            app.getAttId(),
+                            app.getAttCitizenshipCardPatient(),
+                            app.getAttPhoneNumber(),
+                            app.getAttMedicalStaffId(),
+                            exportSdf.format(app.getAttDateAndTime()),
+                            app.getAttAttentionType(),
+                            app.getAttStatus(),
+                            app.getAttReason().replace(",", ";")));
                 }
             }
 
@@ -219,7 +178,7 @@ public class AppointmentController {
             appointmentView.showDialog("Error inesperado al exportar: " + e.getMessage());
         }
     }
-    
+
     private void opClearSchedule() {
         opClearComponents(appointmentView.getSchedulePanel());
     }
@@ -228,9 +187,8 @@ public class AppointmentController {
         opClearComponents(appointmentView.getReSchedulePanel());
     }
 
-    private void opClearComponents (Component comp) {
+    private void opClearComponents(Component comp) {
         opResetValues(comp);
-        
         if (comp instanceof java.awt.Container) {
             for (Component child : ((java.awt.Container) comp).getComponents()) {
                 opClearComponents(child);
@@ -238,17 +196,15 @@ public class AppointmentController {
         }
     }
 
-    private void opResetValues (Component comp) {
+    private void opResetValues(Component comp) {
         if (comp instanceof JTextField && !(comp instanceof javax.swing.JFormattedTextField)) {
             ((JTextField) comp).setText("");
-            
         } else if (comp instanceof JTable) {
             JTable table = (JTable) comp;
             if (table.getModel() instanceof DefaultTableModel) {
                 ((DefaultTableModel) table.getModel()).setRowCount(0);
             }
             table.clearSelection();
-
         }
-    } 
+    }
 }

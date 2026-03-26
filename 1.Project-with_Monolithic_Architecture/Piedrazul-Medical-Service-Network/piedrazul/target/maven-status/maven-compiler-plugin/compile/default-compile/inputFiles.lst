@@ -12,6 +12,7 @@
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Presentation/controller/AdminPanelController.java
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Domain/enums/Profession.java
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Presentation/controller/AppointmentController.java
+/home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Application/services/IAppointmentService.java
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Domain/enums/AppointmentStatus.java
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Presentation/controller/UserController.java
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Domain/entities/ClsAppointmentManager.java
@@ -21,12 +22,11 @@
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Infrastructure/repository/impl/ClsAppointmentRepository.java
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Infrastructure/repository/IUserRepository.java
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Domain/entities/ClsTherapist.java
-/home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/RawDbMapTest.java
+/home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Application/services/impl/ClsAppointmentServiceImpl.java
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Domain/entities/ClsPatient.java
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Domain/entities/ClsAppointment.java
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Presentation/views/LoginView.java
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Domain/entities/ClsClinicalStaff.java
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Infrastructure/config/IDatabaseConnection.java
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Infrastructure/config/impl/SQLiteConnection.java
-/home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Debug.java
 /home/juan/repos/Piedrazul-Medical-Services-Network/1.Project-with_Monolithic_Architecture/Piedrazul-Medical-Service-Network/piedrazul/src/main/java/com/piedrazul/Domain/enums/Role.java

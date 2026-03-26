@@ -5,7 +5,6 @@ com/piedrazul/Presentation/controller/UserController.class
 com/piedrazul/Domain/enums/Role.class
 com/piedrazul/Domain/entities/ClsClinicalStaff.class
 com/piedrazul/Domain/entities/ClsMedic.class
-com/piedrazul/Debug.class
 com/piedrazul/Domain/entities/ClsTherapist.class
 com/piedrazul/Infrastructure/repository/IUserRepository.class
 com/piedrazul/Application/services/IUserService.class
@@ -28,5 +27,4 @@ com/piedrazul/Domain/entities/ClsPatient.class
 com/piedrazul/Application/services/impl/ClsUserServiceImpl.class
 com/piedrazul/Domain/enums/Specialty.class
 com/piedrazul/Infrastructure/repository/impl/ClsAppointmentRepository.class
-com/piedrazul/RawDbMapTest.class
 com/piedrazul/Domain/entities/ClsAdministrator.class
