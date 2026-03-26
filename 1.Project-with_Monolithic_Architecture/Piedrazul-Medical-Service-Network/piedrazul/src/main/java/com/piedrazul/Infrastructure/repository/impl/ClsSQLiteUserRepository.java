@@ -351,7 +351,7 @@ public class ClsSQLiteUserRepository implements IUserRepository {
             ResultSet rs = pstmt.executeQuery();
 
             if (!rs.next()) {
-                throw new RuntimeException("Usuario o contraseña incorrectos o usuario inactivo");
+                throw new RuntimeException("Usuario o contraseña incorrectos. El usuario no existe en la base de datos.");
             }
 
             String roleType = rs.getString("ROLE_TYPE");
