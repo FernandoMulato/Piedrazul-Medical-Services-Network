@@ -7,6 +7,8 @@ import com.piedrazul.Domain.core.events.IClinicObserver;
 import com.piedrazul.Domain.core.events.ClinicEventType;
 import com.piedrazul.Presentation.controller.AdminPanelController;
 import com.piedrazul.Presentation.controller.UserController;
+import com.piedrazul.Services.IAppointmentService;
+import com.piedrazul.Services.IUserService;
 
 import com.piedrazul.Domain.entities.ClsClinicalStaff;
 import com.piedrazul.Domain.entities.ClsPatient;
@@ -21,6 +23,8 @@ import java.awt.*;
 
 public class MainFrame extends JFrame implements IClinicObserver {
   private final UserController userController;
+  private final IUserService userService;
+  private final IAppointmentService appointmentService;
 
   private final ClinicTableModel tableModel = new ClinicTableModel();
   private final JTable table = new JTable(tableModel);
@@ -29,9 +33,11 @@ public class MainFrame extends JFrame implements IClinicObserver {
 
   private long selectedId = 0;
 
-  public MainFrame(UserController controller) {
+  public MainFrame(UserController controller, IUserService userService, IAppointmentService appointmentService) {
     super("Piedrazul - User CRUD");
     this.userController = controller;
+    this.userService = userService;
+    this.appointmentService = appointmentService;
 
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     setSize(980, 520);
@@ -289,8 +295,9 @@ public class MainFrame extends JFrame implements IClinicObserver {
 
     new AdminPanelController(
         adminPanel,
-        null,           
-        userController  
+        userService,
+        userController,
+        appointmentService
     );
 
     adminPanel.setVisible(true);
