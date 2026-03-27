@@ -16,9 +16,6 @@ abstract User<Domain Layer> <<abstract>> #Pink;line:Black;line.dotted;text:gray 
   # state: State
 }
 
-class UserFactory<Domain Layer> <<factory pattern>> #PaleGreen;line:Black;text:Black {
-}
-
 ' from infrastructure layer
 interface IUserRepository<Infrastructure Layer> <<interface>> #aliceblue;line:blue;text:blue {}
 
@@ -35,7 +32,5 @@ UserService ..> User
 UserService -> IUserRepository
 IUserService ..> Role
 UserService ..> Role
-UserService ..> UserFactory
-IUserService ..> UserFactory
 
 @enduml
