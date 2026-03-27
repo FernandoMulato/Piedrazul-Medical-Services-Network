@@ -330,7 +330,7 @@ public class ClsSQLiteUserRepository implements IUserRepository {
    *                          or a database error occurs
    */
   @Override
-  public Role opVerifyUser(String username, String password) throws RuntimeException {
+  public Role opVerifyUser(String username, String password) {
 
     String sql = """
         SELECT R.ROLE_TYPE, S.STATE_TYPE
@@ -356,27 +356,20 @@ public class ClsSQLiteUserRepository implements IUserRepository {
       String roleType = rs.getString("ROLE_TYPE");
       String stateType = rs.getString("STATE_TYPE");
 
-      if ("ACTIVE".equals(stateType)) {
-        switch (roleType) {
-          case "ADMINISTRATOR":
-            return Role.ADMINISTRATOR;
-          case "PATIENT":
-            return Role.PATIENT;
-          case "CLINICALSTAFF":
-            return Role.CLINICALSTAFF;
-          case "APPOINTMENTMANAGER":
-            return Role.APPOINTMENTMANAGER;
-        }
-      } else {
-        // La excepción debe ser para un caso especifico (MODIFICAR)
-        throw new RuntimeException(
-            "Acceso denegado - Usuario BLOQUEADO");
+      boolean isActive = stateType == null || "ACTIVE".equals(stateType);
+
+      if (!isActive) {
+        throw new RuntimeException("Acceso denegado - Usuario BLOQUEADO");
       }
 
-      return null;
+      try {
+        return Role.valueOf(roleType);
+      } catch (IllegalArgumentException e) {
+        throw new IllegalArgumentException("Rol desconocido: " + roleType);
+      }
 
     } catch (SQLException e) {
-      throw new RuntimeException("Error verificando el usuario. 500", e);
+      throw new RuntimeException("Error verificando usuario", e);
     }
   }
 
