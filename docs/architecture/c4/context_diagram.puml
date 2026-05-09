@@ -1,0 +1,30 @@
+@startuml Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_TOP_DOWN()
+LAYOUT_WITH_LEGEND()
+
+title Medical Services Network — Nivel 1: Contexto
+
+' ===== ACTORES =====
+Person(paciente,   "Paciente",       "Agenda, consulta y cancela sus citas médicas")
+Person(agendador,  "Agendador",      "Registra, reprograma y exporta citas")
+Person(medico,     "Médico / Terapista", "Gestiona su agenda y registra historia clínica")
+Person(admin,      "Administrador",  "Gestiona usuarios, profesionales, reportes y auditoría")
+
+' ===== SISTEMA PRINCIPAL =====
+System(msn, "Medical Services Network", "Plataforma central de gestión de citas, historias clínicas, reportes y auditoría médica")
+
+' ===== SISTEMA EXTERNO =====
+System_Ext(ext, "Sistemas Externos", "Integraciones futuras: laboratorios, aseguradoras, etc.")
+
+' ===== RELACIONES =====
+Rel(paciente,  msn, "Consulta y gestiona citas",        "HTTPS")
+Rel(agendador, msn, "Registra y reprograma citas",       "HTTPS")
+Rel(medico,    msn, "Gestiona agenda e historia clínica","HTTPS")
+Rel(admin,     msn, "Administra el sistema",             "HTTPS")
+
+Rel(msn, ext, "Consume / expone datos", "HTTPS / API")
+
+SHOW_LEGEND()
+@enduml

@@ -1,0 +1,94 @@
+@startuml Components
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_TOP_DOWN()
+LAYOUT_WITH_LEGEND()
+
+title Medical Services Network — Nivel 3: Componentes (Appointments Service)
+
+' ===== ENTRADAS EXTERNAS =====
+Container(api_gateway, "API Gateway", "Spring Cloud Gateway", "Enruta las peticiones HTTP al servicio")
+
+' ===== APPOINTMENTS SERVICE =====
+Container_Boundary(svc, "Appointments Service") {
+
+    ' --- Capa de entrada (Controllers) ---
+    Component(appointment_ctrl, "AppointmentController", "Spring MVC · REST",  "CRUD de citas: crear, consultar, cancelar, reprogramar")
+    Component(schedule_ctrl,    "ScheduleController",    "Spring MVC · REST",  "Consulta de slots disponibles por profesional")
+    Component(export_ctrl,      "ExportController",      "Spring MVC · REST",  "Exportación de citas en formato CSV")
+
+    ' --- Capa de negocio (Services) ---
+    Component(appointment_svc,  "AppointmentService",   "Spring Service", "Orquesta la lógica de negocio de citas")
+    Component(validation_svc,   "ValidationService",    "Spring Service", "Valida existencia del paciente vía RabbitMQ")
+    Component(schedule_svc,     "ScheduleService",      "Spring Service", "Calcula disponibilidad horaria del profesional")
+    Component(export_svc,       "ExportService",        "Spring Service", "Genera archivos CSV de citas filtradas")
+
+    ' --- Dominio (Entities / Enums) ---
+    Component(appointment_entity,  "Appointment",          "JPA Entity", "Modelo de dominio de una cita médica")
+    Component(appointment_status,  "AppointmentStatus",    "Enum",       "Estados: SCHEDULED, CANCELLED, COMPLETED")
+    Component(appointment_history, "AppointmentHistory",   "JPA Entity", "Historial de cambios de estado de cada cita")
+
+    ' --- Capa de datos (Repositories) ---
+    Component(appointment_repo, "AppointmentRepository",        "Spring Data JPA", "Acceso y persistencia de citas")
+    Component(history_repo,     "AppointmentHistoryRepository", "Spring Data JPA", "Acceso al historial de cambios")
+
+    ' --- Mensajería (AMQP Clients) ---
+    Component(validation_client, "PatientValidationClient", "Spring AMQP", "Publica y consume validaciones de paciente")
+    Component(audit_publisher,   "AuditEventPublisher",     "Spring AMQP", "Publica eventos de auditoría al bus")
+
+    ' --- Configuración ---
+    Component(rabbit_config, "RabbitMQConfig", "Spring AMQP · @Configuration", "Define exchanges, queues y bindings")
+    Component(web_config,    "WebConfig",      "Spring · @Configuration",      "CORS y configuración de seguridad HTTP")
+}
+
+' ===== INFRAESTRUCTURA EXTERNA =====
+ContainerDb(appointments_db, "appointments_db", "PostgreSQL", "Base de datos exclusiva del servicio de citas")
+
+Container_Boundary(ext, "Servicios Externos") {
+    Container(rabbitmq,   "RabbitMQ",      "AMQP · Puerto 5672", "Bus de mensajes asíncrono")
+    Container(users_svc,  "Users Service", "Spring Boot · REST", "Valida existencia del paciente")
+    Container(audits_svc, "Audits Service","Spring Boot · AMQP", "Registra eventos de auditoría")
+}
+
+' ===== RELACIONES =====
+
+' Gateway → Controllers
+Rel(api_gateway, appointment_ctrl, "POST / GET / PATCH /api/appointments","HTTP")
+Rel(api_gateway, schedule_ctrl,    "GET /api/appointments/slots",          "HTTP")
+Rel(api_gateway, export_ctrl,      "GET /api/appointments/export",         "HTTP")
+
+' Controllers → Services
+Rel(appointment_ctrl, appointment_svc, "Delega operaciones CRUD")
+Rel(schedule_ctrl,    schedule_svc,    "Solicita slots disponibles")
+Rel(export_ctrl,      export_svc,      "Solicita exportación")
+
+' Services entre sí
+Rel(appointment_svc, validation_svc, "Valida paciente antes de crear cita")
+Rel(appointment_svc, schedule_svc,   "Verifica disponibilidad del slot")
+Rel(export_svc,      appointment_svc,"Consulta citas para exportar")
+
+' Services → Dominio
+Rel(appointment_svc, appointment_entity,  "Crea y actualiza")
+Rel(appointment_svc, appointment_status,  "Evalúa estado")
+Rel(appointment_svc, appointment_history, "Registra cambios de estado")
+
+' Services → Repositories
+Rel(appointment_svc, appointment_repo, "Persiste y consulta citas")
+Rel(appointment_svc, history_repo,     "Persiste historial de cambios")
+
+' Services → Mensajería
+Rel(validation_svc,  validation_client, "Publica solicitud de validación")
+Rel(appointment_svc, audit_publisher,   "Publica evento al completar operación")
+
+' Mensajería → Infraestructura externa
+Rel(validation_client, rabbitmq, "patient.validation.requests / responses", "AMQP")
+Rel(audit_publisher,   rabbitmq, "appointment.created / cancelled",         "AMQP")
+Rel(rabbitmq, users_svc,         "Consume validación de paciente",          "AMQP")
+Rel(rabbitmq, audits_svc,        "Entrega eventos de auditoría",            "AMQP")
+
+' Repositories → Base de datos
+Rel(appointment_repo, appointments_db, "Lee / escribe citas",    "JPA · JDBC")
+Rel(history_repo,     appointments_db, "Lee / escribe historial","JPA · JDBC")
+
+SHOW_LEGEND()
+@enduml

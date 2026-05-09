@@ -1,0 +1,93 @@
+@startuml Containers
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_TOP_DOWN()
+LAYOUT_WITH_LEGEND()
+
+title Medical Services Network — Nivel 2: Contenedores
+
+' ===== ACTORES =====
+Person(paciente,  "Paciente",           "Agenda, consulta y cancela citas")
+Person(agendador, "Agendador",          "Registra, reprograma y exporta citas")
+Person(medico,    "Médico / Terapista", "Gestiona agenda y registra historia clínica")
+Person(admin,     "Administrador",      "Gestiona usuarios, profesionales, reportes y auditoría")
+
+' ===== CLIENTE =====
+Container_Boundary(client, "Cliente de Escritorio") {
+    Container(javafx_ui,   "JavaFX UI",    "Java 21 · JavaFX 21", "Interfaz FXML + Controllers")
+    Container(rest_client, "REST Client",  "Spring Web",           "Comunicación HTTP con el gateway")
+}
+
+' ===== API GATEWAY =====
+Container_Boundary(gateway, "API Gateway") {
+    Container(api_gateway, "API Gateway", "Spring Cloud Gateway · Puerto 8080", "Enrutamiento y validación JWT")
+}
+
+' ===== MICROSERVICIOS =====
+Container_Boundary(services, "Microservicios") {
+    Container(auth_svc,         "Auth Service",            "Spring Boot · Java 21", "Login, emisión JWT y gestión de roles")
+    Container(users_svc,        "Users Service",           "Spring Boot · Java 21 · Puerto 8081", "Gestión de usuarios y pacientes")
+    Container(appointments_svc, "Appointments Service",    "Spring Boot · Java 21 · Puerto 8082", "Gestión de citas médicas")
+    Container(professionals_svc,"Professionals Service",   "Spring Boot · Java 21 · Puerto 8083", "Profesionales y disponibilidad horaria")
+    Container(clinical_svc,     "Clinical Records Service","Spring Boot · Java 21 · Puerto 8084", "Historias clínicas de pacientes")
+    Container(reports_svc,      "Reports Service",         "Spring Boot · Java 21 · Puerto 8085", "Reportes y estadísticas")
+    Container(audits_svc,       "Audits Service",          "Spring Boot · Java 21 · Puerto 8086", "Auditoría y registro de eventos")
+}
+
+' ===== MENSAJERÍA =====
+Container_Boundary(messaging, "Mensajería Asíncrona") {
+    Container(rabbitmq, "RabbitMQ", "RabbitMQ 3 · Puerto 5672", "Bus de eventos entre microservicios")
+}
+
+' ===== BASES DE DATOS (una por servicio) =====
+Container_Boundary(dbs, "Bases de Datos — PostgreSQL (una por servicio)") {
+    ContainerDb(auth_db,          "auth_db",             "PostgreSQL", "Credenciales y tokens")
+    ContainerDb(users_db,         "users_db",            "PostgreSQL", "Usuarios y pacientes")
+    ContainerDb(appointments_db,  "appointments_db",     "PostgreSQL", "Citas médicas")
+    ContainerDb(professionals_db, "professionals_db",    "PostgreSQL", "Profesionales y horarios")
+    ContainerDb(clinical_db,      "clinical_records_db", "PostgreSQL", "Registros clínicos")
+    ContainerDb(reports_db,       "reports_db",          "PostgreSQL", "Datos de reportes")
+    ContainerDb(audits_db,        "audits_db",           "PostgreSQL", "Logs de auditoría")
+}
+
+' ===== ACTORES → CLIENTE =====
+Rel(paciente,  javafx_ui, "Usa")
+Rel(agendador, javafx_ui, "Usa")
+Rel(medico,    javafx_ui, "Usa")
+Rel(admin,     javafx_ui, "Usa")
+
+' ===== CLIENTE → GATEWAY =====
+Rel(javafx_ui,   rest_client, "Llama")
+Rel(rest_client, api_gateway, "REST + JWT", "HTTPS · Puerto 8080")
+
+' ===== GATEWAY → SERVICIOS =====
+Rel(api_gateway, auth_svc,          "Routing /api/auth",            "HTTP")
+Rel(api_gateway, users_svc,         "Routing /api/users",           "HTTP")
+Rel(api_gateway, appointments_svc,  "Routing /api/appointments",    "HTTP")
+Rel(api_gateway, professionals_svc, "Routing /api/professionals",   "HTTP")
+Rel(api_gateway, clinical_svc,      "Routing /api/clinical-records","HTTP")
+Rel(api_gateway, reports_svc,       "Routing /api/reports",         "HTTP")
+Rel(api_gateway, audits_svc,        "Routing /api/audits",          "HTTP")
+
+' ===== MENSAJERÍA ASÍNCRONA =====
+Rel(appointments_svc, rabbitmq, "Publica: patient.validation.requests",  "AMQP")
+Rel(rabbitmq, users_svc,        "Consume: patient.validation.requests",  "AMQP")
+Rel(users_svc, rabbitmq,        "Responde: patient.validation.responses","AMQP")
+Rel(rabbitmq, appointments_svc, "Entrega: patient.validation.responses", "AMQP")
+
+Rel(appointments_svc, rabbitmq, "Publica: appointment.created", "AMQP")
+Rel(users_svc,        rabbitmq, "Publica: patient.created",     "AMQP")
+Rel(clinical_svc,     rabbitmq, "Publica: clinical.record.created","AMQP")
+Rel(rabbitmq, audits_svc,       "Consume todos los eventos",    "AMQP")
+
+' ===== SERVICIOS → BASES DE DATOS =====
+Rel(auth_svc,          auth_db,          "Lee / escribe", "JPA · JDBC")
+Rel(users_svc,         users_db,         "Lee / escribe", "JPA · JDBC")
+Rel(appointments_svc,  appointments_db,  "Lee / escribe", "JPA · JDBC")
+Rel(professionals_svc, professionals_db, "Lee / escribe", "JPA · JDBC")
+Rel(clinical_svc,      clinical_db,      "Lee / escribe", "JPA · JDBC")
+Rel(reports_svc,       reports_db,       "Lee / escribe", "JPA · JDBC")
+Rel(audits_svc,        audits_db,        "Lee / escribe", "JPA · JDBC")
+
+SHOW_LEGEND()
+@enduml
