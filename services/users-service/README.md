@@ -4,4 +4,3 @@
 **Project:** Piedrazul Medical Service Network
 **Authors:** Henry Fernando Mulato Llanten  
 **Stack:** Java 21, Spring Boot, PostgreSQL, Maven
----
