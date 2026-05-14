@@ -1,7 +1,7 @@
 @startuml EnumUserRole
 ' ====================================================================
-' Class Diagram - UserRole Enum
-' Reflects EXACTLY com.medical.enums.UserRole.
+' Diagrama de clases - Enum UserRole
+' Refleja EXACTAMENTE com.medical.enums.UserRole.
 ' ====================================================================
 
 skinparam classAttributeIconSize 0

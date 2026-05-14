@@ -1,7 +1,7 @@
 @startuml RepositoryRelations
 ' ====================================================================
-' Class Diagram - Repositories
-' Reflects EXACTLY com.medical.repository.
+' Diagrama de clases - Repositorios
+' Refleja EXACTAMENTE com.medical.repository.
 ' Spring Data JPA repositories.
 ' ====================================================================
 

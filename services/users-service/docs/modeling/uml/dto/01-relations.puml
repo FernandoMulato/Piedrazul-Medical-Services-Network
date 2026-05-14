@@ -1,7 +1,7 @@
 @startuml DtoRelations
 ' ====================================================================
-' Class Diagram - DTOs
-' Reflects EXACTLY com.medical.dto.
+' Diagrama de clases - DTOs
+' Refleja EXACTAMENTE com.medical.dto.
 ' ====================================================================
 
 skinparam classAttributeIconSize 0

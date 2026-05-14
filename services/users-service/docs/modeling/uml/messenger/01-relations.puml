@@ -1,7 +1,7 @@
 @startuml MessengerRelations
 ' ====================================================================
-' Class Diagram - Async Messaging
-' Reflects EXACTLY com.medical.messenger.
+' Diagrama de clases - Mensajeria Asincronica
+' Refleja EXACTAMENTE com.medical.messenger.
 ' ====================================================================
 
 skinparam classAttributeIconSize 0

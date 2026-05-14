@@ -1,7 +1,7 @@
 @startuml ServiceRelations
 ' ====================================================================
-' Class Diagram - UserService
-' Reflects EXACTLY com.medical.service.
+' Diagrama de clases - UserService
+' Refleja EXACTAMENTE com.medical.service.
 ' ====================================================================
 
 skinparam classAttributeIconSize 0

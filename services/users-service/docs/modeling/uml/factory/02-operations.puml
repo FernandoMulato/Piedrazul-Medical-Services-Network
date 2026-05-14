@@ -1,7 +1,7 @@
 @startuml FactoryOperations
 ' ====================================================================
-' Operations Diagram - Factory + Strategy Pattern
-' Shows ONLY methods and attributes (no relationships).
+' Diagrama de operaciones - Factory + Strategy Pattern
+' Muestra SOLO metodos y atributos (sin relaciones).
 ' ====================================================================
 
 skinparam classAttributeIconSize 0

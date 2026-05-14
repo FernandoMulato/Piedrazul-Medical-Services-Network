@@ -1,7 +1,7 @@
 @startuml SequencePatientValidation
 ' ====================================================================
-' Sequence Diagram - Async Patient Validation
-' Flow: appointments-service -> RabbitMQ -> users-service -> response
+' Diagrama de secuencia - Validacion Asincronica de Paciente
+' Flujo: appointments-service -> RabbitMQ -> users-service -> respuesta
 ' ====================================================================
 
 participant "AppointmentsService" as ApptService

@@ -1,6 +1,6 @@
 @startuml PackagesOverview
 ' ====================================================================
-' Diagrama de paquetes - users-service
+' Diagrama de paquetes del users-service
 ' Refleja la estructura de paquetes Java del servicio.
 ' ====================================================================
 

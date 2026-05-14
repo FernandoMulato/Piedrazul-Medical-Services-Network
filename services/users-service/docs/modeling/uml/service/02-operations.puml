@@ -1,7 +1,7 @@
 @startuml ServiceOperations
 ' ====================================================================
-' Operations Diagram - UserService
-' Shows ONLY methods (no relationships).
+' Diagrama de operaciones - UserService
+' Muestra SOLO metodos (sin relaciones).
 ' ====================================================================
 
 skinparam classAttributeIconSize 0

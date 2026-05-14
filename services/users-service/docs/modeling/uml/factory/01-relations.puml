@@ -1,7 +1,7 @@
 @startuml FactoryRelations
 ' ====================================================================
-' Class Diagram - Factory + Strategy Pattern
-' Reflects EXACTLY com.medical.factory.
+' Diagrama de clases - Factory + Strategy Pattern
+' Refleja EXACTAMENTE com.medical.factory.
 ' Implements the Strategy pattern for role-based user creation.
 ' ====================================================================
 

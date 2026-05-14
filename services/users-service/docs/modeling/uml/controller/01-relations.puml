@@ -1,7 +1,7 @@
 @startuml ControllerRelations
 ' ====================================================================
-' Class Diagram - UserController
-' Reflects EXACTLY com.medical.controller.
+' Diagrama de clases - UserController
+' Refleja EXACTAMENTE com.medical.controller.
 ' ====================================================================
 
 skinparam classAttributeIconSize 0

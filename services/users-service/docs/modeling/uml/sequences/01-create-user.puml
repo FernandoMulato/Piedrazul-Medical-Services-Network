@@ -1,7 +1,7 @@
 @startuml SequenceCreateUser
 ' ====================================================================
-' Sequence Diagram - User Creation with Strategy Pattern
-' Full flow: HTTP POST -> Controller -> Service -> Factory -> DB
+' Diagrama de secuencia - Creacion de Usuario con Strategy Pattern
+' Flujo completo: HTTP POST -> Controller -> Service -> Factory -> DB
 ' ====================================================================
 
 actor "Client" as Client

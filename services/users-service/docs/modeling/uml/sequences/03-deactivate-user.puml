@@ -1,8 +1,8 @@
 @startuml SequenceDeactivateUser
 ' ====================================================================
-' Sequence Diagram - User Deactivation
-' Flow: HTTP PATCH -> Controller -> Service -> Business rule -> DB
-' Includes: cannot deactivate the last active ADMIN.
+' Diagrama de secuencia - Desactivacion de Usuario
+' Flujo: HTTP PATCH -> Controller -> Service -> Regla de negocio -> DB
+' Incluye: no desactivar el ultimo ADMIN activo.
 ' ====================================================================
 
 actor "Client" as Client

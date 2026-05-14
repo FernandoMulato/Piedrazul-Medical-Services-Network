@@ -1,7 +1,7 @@
 @startuml ControllerOperations
 ' ====================================================================
-' Operations Diagram - UserController
-' Shows ONLY endpoints and methods (no relationships).
+' Diagrama de operaciones - UserController
+' Muestra SOLO endpoints y metodos (sin relaciones).
 ' ====================================================================
 
 skinparam classAttributeIconSize 0

@@ -1,7 +1,7 @@
 @startuml EntitiesRelations
 ' ====================================================================
-' Class Diagram - JPA Entities
-' Reflects EXACTLY com.medical.entities.
+' Diagrama de clases - Entidades JPA
+' Refleja EXACTAMENTE com.medical.entities.
 ' ====================================================================
 
 skinparam classAttributeIconSize 0

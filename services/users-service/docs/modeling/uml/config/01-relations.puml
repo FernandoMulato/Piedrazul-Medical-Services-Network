@@ -1,7 +1,7 @@
 @startuml ConfigSecurity
 ' ====================================================================
-' Class Diagram - SecurityConfig
-' Reflects EXACTLY com.medical.config.
+' Diagrama de clases - SecurityConfig
+' Refleja EXACTAMENTE com.medical.config.
 ' ====================================================================
 
 skinparam classAttributeIconSize 0
