@@ -1,6 +1,7 @@
 package com.medical.service;
 
 import com.medical.dto.CreateUserRequest;
+import com.medical.dto.UpdateUserRequest;
 import com.medical.dto.UserResponse;
 import com.medical.entities.User;
 import com.medical.enums.UserRole;
@@ -16,6 +17,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -149,6 +153,179 @@ class UserServiceTest {
   }
 
   @Test
+  void shouldThrowException_whenUserNotFound_onUpdate() {
+    // Given
+    when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+    // When & Then
+    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+        () -> userService.updateUser(99L, UpdateUserRequest.builder().build()));
+    assertEquals("User not found", ex.getMessage());
+    verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  void shouldThrowException_whenUsernameAlreadyExists_onUpdate() {
+    // Given
+    User existingUser = User.builder()
+        .id(1L)
+        .username("original.user")
+        .passwordHash("hash")
+        .email("original@example.com")
+        .role(UserRole.PATIENT)
+        .active(true)
+        .build();
+
+    UpdateUserRequest request = UpdateUserRequest.builder()
+        .username("taken.user")
+        .build();
+
+    when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
+    when(userRepository.existsByUsername("taken.user")).thenReturn(true);
+
+    // When & Then
+    assertThrows(IllegalArgumentException.class,
+        () -> userService.updateUser(1L, request));
+    verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  void shouldThrowException_whenEmailAlreadyExists_onUpdate() {
+    // Given
+    User existingUser = User.builder()
+        .id(1L)
+        .username("original.user")
+        .passwordHash("hash")
+        .email("original@example.com")
+        .role(UserRole.PATIENT)
+        .active(true)
+        .build();
+
+    // Same username as existing — skip username check, trigger email check
+    UpdateUserRequest request = UpdateUserRequest.builder()
+        .username("original.user")
+        .email("taken@example.com")
+        .build();
+
+    when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
+    when(userRepository.existsByEmail("taken@example.com")).thenReturn(true);
+
+    // When & Then
+    assertThrows(IllegalArgumentException.class,
+        () -> userService.updateUser(1L, request));
+    verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  void shouldThrowException_whenWeakPassword_onUpdate() {
+    // Given
+    User existingUser = User.builder()
+        .id(1L)
+        .username("user")
+        .passwordHash("hash")
+        .email("user@example.com")
+        .role(UserRole.PATIENT)
+        .active(true)
+        .build();
+
+    when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
+
+    // When & Then — each weak password case should be rejected
+    // Less than 8 characters
+    UpdateUserRequest tooShort = UpdateUserRequest.builder().password("Ab1!").build();
+    IllegalArgumentException ex1 = assertThrows(IllegalArgumentException.class,
+        () -> userService.updateUser(1L, tooShort));
+    assertEquals("The password does not meet the minimum policy", ex1.getMessage());
+
+    // No uppercase letter
+    UpdateUserRequest noUpper = UpdateUserRequest.builder().password("password123!").build();
+    IllegalArgumentException ex2 = assertThrows(IllegalArgumentException.class,
+        () -> userService.updateUser(1L, noUpper));
+    assertEquals("The password does not meet the minimum policy", ex2.getMessage());
+
+    // No number
+    UpdateUserRequest noNumber = UpdateUserRequest.builder().password("Password!!!").build();
+    IllegalArgumentException ex3 = assertThrows(IllegalArgumentException.class,
+        () -> userService.updateUser(1L, noNumber));
+    assertEquals("The password does not meet the minimum policy", ex3.getMessage());
+
+    // No special character
+    UpdateUserRequest noSpecial = UpdateUserRequest.builder().password("Password1").build();
+    IllegalArgumentException ex4 = assertThrows(IllegalArgumentException.class,
+        () -> userService.updateUser(1L, noSpecial));
+    assertEquals("The password does not meet the minimum policy", ex4.getMessage());
+
+    verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  @org.junit.jupiter.api.Disabled("PRODUCTION GAP (Phase 1.6): updateUser() does not validate professional " +
+      "role constraint. Changing a user's role to PROFESSIONAL without providing " +
+      "specialty/licenseNumber should throw IllegalArgumentException, but " +
+      "updateUser() sets the role directly without calling strategy.validate().")
+  void shouldThrowException_whenRoleChangedToProfessionalWithoutAssociation() {
+    // Given
+    // EXPECTED BEHAVIOR (per spec): Changing role to PROFESSIONAL without
+    // professional info (specialty, licenseNumber) should be rejected.
+    // PRODUCTION GAP: updateUser() sets role without any validation.
+    User existingUser = User.builder()
+        .id(1L)
+        .username("user")
+        .passwordHash("hash")
+        .email("user@example.com")
+        .role(UserRole.PATIENT)
+        .active(true)
+        .build();
+
+    UpdateUserRequest request = UpdateUserRequest.builder()
+        .role(UserRole.PROFESSIONAL)
+        // Missing: specialty, licenseNumber — should trigger validation
+        .build();
+
+    when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
+
+    // When & Then — should throw but currently does not
+    assertThrows(IllegalArgumentException.class,
+        () -> userService.updateUser(1L, request));
+  }
+
+  @Test
+  void shouldUpdateUser_whenValidData() {
+    // Given
+    User existingUser = User.builder()
+        .id(1L)
+        .username("old.user")
+        .passwordHash("old_hash")
+        .email("old@example.com")
+        .role(UserRole.PATIENT)
+        .active(true)
+        .build();
+
+    UpdateUserRequest request = UpdateUserRequest.builder()
+        .username("new.user")
+        .password("NewPassword123!")
+        .email("new@example.com")
+        .role(UserRole.ADMIN)
+        .build();
+
+    when(userRepository.findById(1L)).thenReturn(Optional.of(existingUser));
+    when(userRepository.existsByUsername("new.user")).thenReturn(false);
+    when(userRepository.existsByEmail("new@example.com")).thenReturn(false);
+    when(passwordEncoder.encode("NewPassword123!")).thenReturn("encoded_new_password");
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    // When
+    UserResponse response = userService.updateUser(1L, request);
+
+    // Then
+    assertNotNull(response);
+    assertEquals("new.user", response.getUsername());
+    assertEquals("new@example.com", response.getEmail());
+    assertEquals(UserRole.ADMIN, response.getRole());
+    verify(userRepository, times(1)).save(any(User.class));
+  }
+
+  @Test
   @org.junit.jupiter.api.Disabled("Pending: integration with professionals-service")
   void shouldThrowException_whenProfessionalRoleWithoutProfessionalId() {
     // Given - Creating a user with PROFESSIONAL role but no professional
@@ -171,5 +348,194 @@ class UserServiceTest {
 
     // When & Then
     assertThrows(IllegalArgumentException.class, () -> userService.createUser(request));
+  }
+
+  // ──────────────────────────────────────────────
+  // Phase 2: getAllUsers
+  // ──────────────────────────────────────────────
+
+  @Test
+  void shouldReturnAllUsers() {
+    // Given
+    User user1 = User.builder()
+        .id(1L)
+        .username("alice")
+        .passwordHash("hash1")
+        .email("alice@example.com")
+        .role(UserRole.ADMIN)
+        .active(true)
+        .build();
+
+    User user2 = User.builder()
+        .id(2L)
+        .username("bob")
+        .passwordHash("hash2")
+        .email("bob@example.com")
+        .role(UserRole.PATIENT)
+        .active(true)
+        .build();
+
+    when(userRepository.findAll()).thenReturn(List.of(user1, user2));
+
+    // When
+    List<UserResponse> result = userService.getAllUsers();
+
+    // Then
+    assertEquals(2, result.size());
+    assertEquals("alice", result.get(0).getUsername());
+    assertEquals(UserRole.ADMIN, result.get(0).getRole());
+    assertTrue(result.get(0).getActive());
+    assertEquals("bob", result.get(1).getUsername());
+    assertEquals(UserRole.PATIENT, result.get(1).getRole());
+    verify(userRepository, times(1)).findAll();
+  }
+
+  // ──────────────────────────────────────────────
+  // Phase 2: getUserById
+  // ──────────────────────────────────────────────
+
+  @Test
+  void shouldReturnUser_whenUserExists() {
+    // Given
+    User user = User.builder()
+        .id(1L)
+        .username("charlie")
+        .passwordHash("hash")
+        .email("charlie@example.com")
+        .role(UserRole.SCHEDULER)
+        .active(true)
+        .build();
+
+    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+    // When
+    UserResponse response = userService.getUserById(1L);
+
+    // Then
+    assertNotNull(response);
+    assertEquals(1L, response.getId());
+    assertEquals("charlie", response.getUsername());
+    assertEquals("charlie@example.com", response.getEmail());
+    assertEquals(UserRole.SCHEDULER, response.getRole());
+    assertTrue(response.getActive());
+    verify(userRepository, times(1)).findById(1L);
+  }
+
+  @Test
+  void shouldThrowException_whenUserNotFound() {
+    // Given
+    when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+    // When & Then
+    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+        () -> userService.getUserById(99L));
+    assertEquals("User not found", ex.getMessage());
+    verify(userRepository, times(1)).findById(99L);
+  }
+
+  // ──────────────────────────────────────────────
+  // Phase 3: deactivateUser
+  // ──────────────────────────────────────────────
+
+  @Test
+  void shouldDeactivateUser_whenUserIsActive() {
+    // Given
+    User user = User.builder()
+        .id(1L)
+        .username("dave")
+        .passwordHash("hash")
+        .email("dave@example.com")
+        .role(UserRole.PATIENT)
+        .active(true)
+        .build();
+
+    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    // When
+    userService.deactivateUser(1L);
+
+    // Then
+    assertFalse(user.getActive());
+    verify(userRepository, times(1)).save(user);
+  }
+
+  @Test
+  void shouldThrowException_whenDeactivatingLastAdmin() {
+    // Given
+    User admin = User.builder()
+        .id(1L)
+        .username("lastadmin")
+        .passwordHash("hash")
+        .email("admin@example.com")
+        .role(UserRole.ADMIN)
+        .active(true)
+        .build();
+
+    when(userRepository.findById(1L)).thenReturn(Optional.of(admin));
+    when(userRepository.countByRoleAndActive(UserRole.ADMIN, true)).thenReturn(1L);
+
+    // When & Then
+    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+        () -> userService.deactivateUser(1L));
+    assertTrue(ex.getMessage().contains("last administrator"));
+    verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  void shouldThrowException_whenUserNotFound_onDeactivate() {
+    // Given
+    when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+    // When & Then
+    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+        () -> userService.deactivateUser(99L));
+    assertEquals("User not found", ex.getMessage());
+    verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  void shouldThrowException_whenUserAlreadyInactive() {
+    // Given
+    User user = User.builder()
+        .id(1L)
+        .username("inactive.user")
+        .passwordHash("hash")
+        .email("inactive@example.com")
+        .role(UserRole.PATIENT)
+        .active(false)
+        .build();
+
+    when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+    // When & Then
+    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+        () -> userService.deactivateUser(1L));
+    assertEquals("The user is already inactive", ex.getMessage());
+    verify(userRepository, never()).save(any(User.class));
+  }
+
+  @Test
+  void shouldDeactivateUser_whenActiveAdminWithOtherAdmins() {
+    // Given — admin with other active admins
+    User admin = User.builder()
+        .id(2L)
+        .username("anotheradmin")
+        .passwordHash("hash")
+        .email("admin2@example.com")
+        .role(UserRole.ADMIN)
+        .active(true)
+        .build();
+
+    when(userRepository.findById(2L)).thenReturn(Optional.of(admin));
+    when(userRepository.countByRoleAndActive(UserRole.ADMIN, true)).thenReturn(2L);
+    when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    // When
+    userService.deactivateUser(2L);
+
+    // Then
+    assertFalse(admin.getActive());
+    verify(userRepository, times(1)).save(admin);
   }
 }
