@@ -64,7 +64,11 @@ Professional "0..1" --> "1" User : "belongs to"
 note bottom of User
   **Entidad base**
   Timestamps manejados con
-  @PrePersist / @PreUpdate
+  @PrePersist / @PreUpdate.
+  Indices: active y compuesto
+  (role, active). El compuesto
+  cubre busquedas solo por role
+  via leftmost prefix.
 end note
 
 note right of Patient

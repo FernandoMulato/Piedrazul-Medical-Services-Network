@@ -11,7 +11,10 @@ import com.medical.enums.UserRole;
  * @author Henry Fernando Mulato Llanten <henrymulato@unicauca.edu.co>
  */
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = {
+    @Index(name = "idx_users_active", columnList = "active"),
+    @Index(name = "idx_users_role_active", columnList = "role, active")
+})
 @Getter
 @Setter
 @NoArgsConstructor
