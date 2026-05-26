@@ -1,17 +1,24 @@
 package com.medical.factory;
 
 import com.medical.dto.CreateUserRequest;
+import com.medical.entities.Professional;
 import com.medical.entities.User;
 import com.medical.enums.UserRole;
+import com.medical.repository.IProfessionalRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**
  * Strategy for creating users with PROFESSIONAL role.
- * Validates that specialty and license number are provided.
+ * Validates that specialty and license number are provided
+ * and creates the associated Professional entity.
  * @author Henry Fernando Mulato Llanten <henrymulato@unicauca.edu.co>
  */
 @Component
+@RequiredArgsConstructor
 public class ProfessionalCreationStrategy implements IUserCreationStrategy {
+
+  private final IProfessionalRepository professionalRepository;
 
   @Override
   public UserRole getSupportedRole() {
@@ -31,5 +38,18 @@ public class ProfessionalCreationStrategy implements IUserCreationStrategy {
         .role(UserRole.PROFESSIONAL)
         .active(true)
         .build();
+  }
+
+  @Override
+  public void createAssociatedEntities(User savedUser, CreateUserRequest request) {
+    Professional professional = Professional.builder()
+        .user(savedUser)
+        .firstName(request.getFirstName())
+        .lastName(request.getLastName())
+        .specialty(request.getSpecialty())
+        .licenseNumber(request.getLicenseNumber())
+        .phone(request.getPhone())
+        .build();
+    professionalRepository.save(professional);
   }
 }
