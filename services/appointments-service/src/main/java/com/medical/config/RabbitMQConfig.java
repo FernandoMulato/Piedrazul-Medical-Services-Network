@@ -81,8 +81,8 @@ public class RabbitMQConfig {
      * JSON message converter for RabbitMQ.
      */
     @Bean
-    public MessageConverter jsonMessageConverter() {
-        return new Jackson2JsonMessageConverter();
+    public MessageConverter jsonMessageConverter(com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
+        return new Jackson2JsonMessageConverter(objectMapper);
     }
 
     /**
