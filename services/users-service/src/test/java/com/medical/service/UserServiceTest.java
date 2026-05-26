@@ -392,9 +392,13 @@ class UserServiceTest {
     assertEquals("alice", result.get(0).getUsername());
     assertEquals(UserRole.ADMIN, result.get(0).getRole());
     assertTrue(result.get(0).getActive());
+    assertNull(result.get(0).getFirstName()); // No enrichment in list-all
     assertEquals("bob", result.get(1).getUsername());
     assertEquals(UserRole.PATIENT, result.get(1).getRole());
+    assertNull(result.get(1).getFirstName()); // No enrichment in list-all
     verify(userRepository, times(1)).findAll();
+    verify(patientRepository, never()).findByUserId(anyLong());
+    verify(professionalRepository, never()).findByUserId(anyLong());
   }
 
   // ──────────────────────────────────────────────

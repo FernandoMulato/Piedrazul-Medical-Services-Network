@@ -182,7 +182,7 @@ Puerto por defecto: **8081**.
 | `GET` | `/api/users/search/advanced?username=&email=&role=&active=` | Búsqueda combinada (AND) | `200`, `400` |
 | `GET` | `/actuator/health` | Health check | `200`, `503` |
 
-> **Nota:** Los endpoints que devuelven `UserResponse` incluyen ahora datos enriquecidos para roles `PATIENT` y `PROFESSIONAL` (firstName, lastName, documentType, documentNumber, birthDate, phone, address, eps para pacientes; firstName, lastName, specialty, licenseNumber, phone para profesionales). Los roles `ADMIN` y `SCHEDULER` solo reciben campos base.
+> **Nota sobre enriquecimiento de respuesta:** `GET /api/users` retorna solo campos base de User (sin datos de Patient/Professional). Los endpoints de búsqueda específica (`GET /api/users/{id}`, `GET /api/users/search/role/{role}`, etc.) incluyen datos enriquecidos para roles `PATIENT` (firstName, lastName, documentType, documentNumber, birthDate, phone, address, eps) y `PROFESSIONAL` (firstName, lastName, specialty, licenseNumber, phone). Los campos no relevantes para el rol se omiten del JSON.
 
 > Para ejemplos completos de request/response, ver [`docs/postman-collection.md`](docs/postman-collection.md).
 
@@ -260,7 +260,7 @@ Puerto por defecto: **8081**.
 | Respuesta enriquecida con datos de Professional para rol PROFESSIONAL | ✅ Cubierto |
 | Roles ADMIN/SCHEDULER retornan solo campos base | ✅ Cubierto |
 
-> **Enriquecimiento de respuesta:** Los endpoints que devuelven `UserResponse` cargan automáticamente los datos de la entidad `Patient` o `Professional` asociada cuando el rol es PATIENT o PROFESSIONAL respectivamente. Esto aplica a todos los endpoints de consulta (getAllUsers, getUserById, searchByUsername, searchByEmail, searchByRole, searchByStatus, searchAdvanced). Si no existen datos asociados (inconsistencia), se retornan los campos enriquecidos como `null` sin lanzar excepción.
+> **Enriquecimiento de respuesta:** Los endpoints de consulta específica (`getUserById`, searchByUsername, searchByEmail, searchByRole, searchByStatus, searchAdvanced) cargan automáticamente los datos de la entidad `Patient` o `Professional` asociada cuando el rol es PATIENT o PROFESSIONAL respectivamente. `GET /api/users` (listar todos) retorna solo campos base. Los campos no relevantes para el rol se omiten del JSON (`@JsonInclude(NON_NULL)`). Si no existen datos asociados (inconsistencia), los campos enriquecidos se omiten sin lanzar excepción.
 
 ---
 

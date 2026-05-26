@@ -97,6 +97,22 @@ public class UserService {
   }
 
   /**
+   * Map user entity to base response DTO (no enrichment).
+   * Used for list-all operations where role-specific fields are not needed.
+   */
+  private UserResponse mapToBaseResponse(User user) {
+    return UserResponse.builder()
+        .id(user.getId())
+        .username(user.getUsername())
+        .email(user.getEmail())
+        .role(user.getRole())
+        .active(user.getActive())
+        .createdAt(user.getCreatedAt())
+        .updatedAt(user.getUpdatedAt())
+        .build();
+  }
+
+  /**
    * Map user entity to response DTO, enriching with role-specific data.
    */
   private UserResponse mapToResponse(User user) {
@@ -139,7 +155,7 @@ public class UserService {
   @Transactional(readOnly = true)
   public List<UserResponse> getAllUsers() {
     return userRepository.findAll().stream()
-        .map(this::mapToResponse)
+        .map(this::mapToBaseResponse)
         .toList();
   }
 

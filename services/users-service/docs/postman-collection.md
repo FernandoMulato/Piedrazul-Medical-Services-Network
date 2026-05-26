@@ -107,7 +107,7 @@ Roles disponibles: `ADMIN`, `SCHEDULER`, `PATIENT`, `PROFESSIONAL`.
 
 > **`GET /api/users`**
 
-**Response — `200 OK`:**
+**Response — `200 OK`** (solo campos base, sin enriquecimiento):
 
 ```json
 [
@@ -118,22 +118,12 @@ Roles disponibles: `ADMIN`, `SCHEDULER`, `PATIENT`, `PROFESSIONAL`.
     "role": "PATIENT",
     "active": true,
     "createdAt": "2026-05-22T10:30:00",
-    "updatedAt": "2026-05-22T10:30:00",
-    "firstName": "Juan",
-    "lastName": "Pérez",
-    "specialty": null,
-    "licenseNumber": null,
-    "documentType": "CC",
-    "documentNumber": "1234567890",
-    "birthDate": null,
-    "phone": "3001234567",
-    "address": "Calle 123 #45-67",
-    "eps": "Nueva EPS"
+    "updatedAt": "2026-05-22T10:30:00"
   }
 ]
 ```
 
-> Los datos del paciente se cargan automáticamente. Para roles `ADMIN` o `SCHEDULER` los campos de extensión son `null`.
+> `GET /api/users` retorna solo campos base de User, independientemente del rol. Para obtener datos enriquecidos usar `GET /api/users/{id}` o los endpoints de búsqueda específica.
 
 ---
 
