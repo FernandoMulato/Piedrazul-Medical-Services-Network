@@ -1,7 +1,6 @@
 package com.piedrazul.clinicalrecords.strategy;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,6 +11,8 @@ public class ClinicalRecordStrategyFactory {
 
     private final TherapistClinicalRecordStrategy therapistStrategy;
 
+    private final DentistClinicalRecordStrategy dentistStrategy;
+
     public ClinicalRecordStrategy getStrategy(
             String professionalType) {
 
@@ -20,6 +21,8 @@ public class ClinicalRecordStrategyFactory {
             case "PHYSICIAN" -> physicianStrategy;
 
             case "THERAPIST" -> therapistStrategy;
+
+            case "DENTIST" -> dentistStrategy;
 
             default -> throw new RuntimeException(
                     "Invalid professional type");
