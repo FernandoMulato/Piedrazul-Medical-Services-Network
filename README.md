@@ -1,146 +1,258 @@
-# Medical Services Network
+# Clinical Records Service
 
-**Proyecto:** Sistema de Gestión de Citas Médicas para Centro de Salud Piedra Azul  
-**Stack:** Java 21, Spring Boot, PostgreSQL, JavaFX, Maven  
-**Arquitectura:** Microservicios
+Microservicio encargado de la gestión de historias clínicas del sistema Piedra Azul Medical Services Network.
 
 ---
 
-## Descripción
+# Tecnologías utilizadas
 
-Sistema de gestión de servicios médicos implementado como arquitectura de microservicios con comunicación asíncrona via RabbitMQ.
-
-### Servicios
-
-| Service | Puerto | Base de Datos | Responsabilidad |
-|---------|--------|---------------|-----------------|
-| api-gateway | 8080 | — | Routing y autenticación |
-| users-service | 8081 | users_db | Gestión de usuarios, pacientes, profesionales |
-| appointments-service | 8082 | appointments_db | Gestión de citas médicas |
-| professionals-service | 8083 | professionals_db | Gestión de profesionales |
-| clinical-records-service | 8084 | clinical_records_db | Registros clínicos |
-| reports-service | 8085 | reports_db | Reportes estadísticos |
-| audits-service | 8086 | audits_db | Auditoría y logs |
+- Java 21
+- Spring Boot
+- Spring Data JPA
+- PostgreSQL
+- Maven
+- Lombok
+- Postman
 
 ---
 
-## Tech Stack
+# Arquitectura del proyecto
 
-| Componente | Tecnología | ADR |
-|------------|------------|-----|
-| Lenguaje | Java 21 | ADR-002 |
-| Framework | Spring Boot | ADR-005 |
-| Base de Datos | PostgreSQL | ADR-006 |
-| UI Desktop | JavaFX | ADR-007 |
-| Arquitectura | Microservicios | ADR-001 |
-| Patrones | Factory, Observer, Strategy | ADR-003 |
-| Principios | SOLID | ADR-004 |
+El proyecto implementa arquitectura por capas:
 
----
-
-## Estructura del Proyecto
-
+```text
+Controller -> Facade -> Service -> Repository -> PostgreSQL
 ```
-Medical-Services-Network/
-├── ADRs/                          # Architecture Decision Records
-│   ├── ADR-001-microservices-architecture.md
-│   ├── ADR-002-java-as-primary-language.md
-│   ├── ADR-003-design-patterns.md
-│   ├── ADR-004-solid-principles.md
-│   ├── ADR-005-spring-boot-for-microservices.md
-│   ├── ADR-006-postgresql-as-database.md
-│   └── ADR-007-javafx-for-desktop-ui.md
-│
-├── services/                       # Microservicios
-│   ├── api-gateway/               # Puerto 8080
-│   ├── users-service/            # Puerto 8081
-│   ├── appointments-service/      # Puerto 8082
-│   ├── professionals-service/    # Puerto 8083
-│   ├── clinical-records-service/  # Puerto 8084
-│   ├── reports-service/          # Puerto 8085
-│   └── audits-service/           # Puerto 8086
-│
-├── shared/                        # Librerías compartidas
-│   └── medical-common/           # Modelos, DTOs, excepciones
-│
-├── docs/                         # Documentación
-│   ├── architecture/
-│   ├── product/
-│   └── specs/
-│
-└── README.md                      # Este archivo
+
+Estructura principal:
+
+```text
+src/main/java/com/piedrazul/clinicalrecords
+
+├── controller
+├── dto
+├── entity
+├── repository
+├── service
+├── facade
+├── builder
+├── strategy
+├── observer
+├── exception
 ```
 
 ---
 
-## Prerrequisitos
+# Patrones de diseño implementados
 
-1. **Java 21** o superior
-2. **PostgreSQL 14+**
-3. **RabbitMQ 3** (vía Docker)
-4. **Maven 3.9+**
+## Builder Pattern
+
+Utilizado para construir objetos `ClinicalRecord`
+de manera limpia y escalable.
+
+Clase principal:
+
+```text
+ClinicalRecordBuilder
+```
 
 ---
 
-## Inicio Rápido
+## Strategy Pattern
 
-### 1. Levantar Infraestructura
+Permite aplicar validaciones dependiendo del tipo
+de profesional de salud.
+
+Clases principales:
+
+```text
+ClinicalRecordStrategy
+DoctorClinicalRecordStrategy
+ClinicalRecordStrategyFactory
+```
+
+---
+
+## Observer Pattern
+
+Permite notificar eventos cuando se crea una
+historia clínica.
+
+Clases principales:
+
+```text
+ClinicalRecordObserver
+NotificationObserver
+ClinicalRecordObserverManager
+```
+
+---
+
+## Facade Pattern
+
+Centraliza el acceso a la lógica del sistema.
+
+Clase principal:
+
+```text
+ClinicalRecordFacade
+```
+
+---
+
+# Configuración de la base de datos
+
+Base de datos utilizada:
+
+```text
+PostgreSQL
+```
+
+Configuración en:
+
+```properties
+application.properties
+```
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/clinical_records_db
+spring.datasource.username=postgres
+spring.datasource.password=TU_PASSWORD
+
+spring.jpa.hibernate.ddl-auto=update
+```
+
+---
+
+# Ejecución del proyecto
+
+## 1. Clonar repositorio
 
 ```bash
-docker-compose up -d
+git clone URL_DEL_REPOSITORIO
 ```
 
-### 2. Compilar Servicios
+---
+
+## 2. Entrar al proyecto
 
 ```bash
-cd services/users-service && mvn clean package -DskipTests
-cd services/appointments-service && mvn clean package -DskipTests
+cd clinical-records-service
 ```
 
-### 3. Iniciar Servicios
+---
+
+## 3. Ejecutar aplicación
 
 ```bash
-# Cada servicio en su puerto correspondiente (8081-8086)
-java -jar services/users-service/target/users-service-*.jar
+mvn spring-boot:run
+```
+
+El microservicio correrá en:
+
+```text
+http://localhost:8084
 ```
 
 ---
 
-## Documentación
+# Endpoints REST
 
-| Documento | Descripción |
-|-----------|-------------|
-| `ADRs/` | Architectural Decision Records |
-| `docs/product/user-stories/` | Historias de usuario |
+## Crear historia clínica
 
----
+```http
+POST /api/v1/clinical-records
+```
 
-## Principios de Diseño
+Body:
 
-Este proyecto sigue los principios SOLID (ADR-004) y utiliza patrones de diseño (ADR-003):
-
-- **Factory Method**: Centralización de creación de entidades
-- **Observer**: Sincronización de vistas con estado
-- **Strategy**: Persistencia flexible sin modificar repositorios
-
----
-
-## Próximos Pasos
-
-- [ ] Completar implementaciones de services
-- [ ] Implementar cliente JavaFX
-- [ ] Agregar autenticación con JWT
-- [ ] Configurar API Gateway
+```json
+{
+  "patientId": 1,
+  "professionalId": 10,
+  "professionalType": "DOCTOR",
+  "diagnosis": "Migraña",
+  "treatment": "Ibuprofeno",
+  "observations": "Reposo",
+  "consultationDate": "2026-05-26"
+}
+```
 
 ---
 
-## Licencia
+## Obtener historia clínica por ID
 
-Este proyecto es para fines educativos y de demostración.
+```http
+GET /api/v1/clinical-records/{id}
+```
 
 ---
 
-## Autores
+## Obtener historias por paciente
 
-Henry Fernando Mulato Llanten - Juan Jose Rodriguez - Leyder Ceron
-Centro de Salud Piedra Azul - Popayán, Colombia
+```http
+GET /api/v1/clinical-records/patient/{patientId}
+```
+
+---
+
+## Actualizar historia clínica
+
+```http
+PUT /api/v1/clinical-records/{id}
+```
+
+Body:
+
+```json
+{
+  "diagnosis": "Gripe",
+  "treatment": "Acetaminofén",
+  "observations": "Tomar líquidos"
+}
+```
+
+---
+
+## Eliminar historia clínica
+
+```http
+DELETE /api/v1/clinical-records/{id}
+```
+
+---
+
+# Validaciones implementadas
+
+Se implementaron validaciones utilizando:
+
+```text
+jakarta.validation
+```
+
+Ejemplos:
+- @NotNull
+- @NotBlank
+
+---
+
+# Manejo de excepciones
+
+Se implementó manejo global de excepciones mediante:
+
+```text
+GlobalExceptionHandler
+```
+
+---
+
+# Pruebas realizadas
+
+Se realizaron pruebas completas en Postman:
+
+- POST
+- GET
+- PUT
+- DELETE
+
+Todas funcionando correctamente.
