@@ -1,5 +1,6 @@
 package com.medical.service;
 
+import com.medical.config.JwtConfig;
 import com.medical.dto.AuthValidationRequest;
 import com.medical.dto.AuthValidationResponse;
 import com.medical.dto.LoginRequest;
@@ -23,6 +24,7 @@ public class AuthService {
 
     private final WebClient.Builder webClientBuilder;
     private final JwtService jwtService;
+    private final JwtConfig jwtConfig;
 
     /**
      * Authenticates user credentials and returns a signed JWT.
@@ -53,7 +55,7 @@ public class AuthService {
                             validationResponse.getRole());
                     return Mono.just(LoginResponse.builder()
                             .token(token)
-                            .expiresIn(3600000L) // placeholder — will be read from config in PR 3
+                            .expiresIn(jwtConfig.getExpiration())
                             .build());
                 });
     }

@@ -1,5 +1,6 @@
 package com.medical.service;
 
+import com.medical.config.JwtConfig;
 import com.medical.dto.AuthValidationRequest;
 import com.medical.dto.AuthValidationResponse;
 import com.medical.dto.LoginRequest;
@@ -35,6 +36,9 @@ class AuthServiceTest {
     private JwtService jwtService;
 
     @Mock
+    private JwtConfig jwtConfig;
+
+    @Mock
     private WebClient webClient;
 
     @Mock
@@ -57,7 +61,7 @@ class AuthServiceTest {
         when(webClientBuilder.baseUrl(anyString())).thenReturn(webClientBuilder);
         when(webClientBuilder.build()).thenReturn(webClient);
 
-        authService = new AuthService(webClientBuilder, jwtService);
+        authService = new AuthService(webClientBuilder, jwtService, jwtConfig);
     }
 
     @Nested
@@ -75,6 +79,7 @@ class AuthServiceTest {
                     .role("ADMIN")
                     .build();
 
+            when(jwtConfig.getExpiration()).thenReturn(86400000L);
             when(jwtService.generateToken(1L, "jdoe", "ADMIN")).thenReturn("mocked-jwt-token");
             when(webClient.post()).thenReturn(requestBodyUriSpec);
             when(requestBodyUriSpec.uri("/api/users/auth/login")).thenReturn(requestBodySpec);
