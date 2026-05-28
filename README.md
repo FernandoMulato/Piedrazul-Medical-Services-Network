@@ -1,7 +1,7 @@
 # Medical Services Network
 
 **Proyecto:** Sistema de Gestión de Citas Médicas para Centro de Salud Piedra Azul  
-**Stack:** Java 21, Spring Boot, PostgreSQL, JavaFX, Maven  
+**Stack:** Java 21, Spring Boot 3.5.14, PostgreSQL, JavaFX, Maven  
 **Arquitectura:** Microservicios
 
 ---
@@ -12,15 +12,15 @@ Sistema de gestión de servicios médicos implementado como arquitectura de micr
 
 ### Servicios
 
-| Service | Puerto | Base de Datos | Responsabilidad |
-|---------|--------|---------------|-----------------|
-| api-gateway | 8080 | — | Routing y autenticación |
-| users-service | 8081 | users_db | Gestión de usuarios, pacientes, profesionales |
-| appointments-service | 8082 | appointments_db | Gestión de citas médicas |
-| professionals-service | 8083 | professionals_db | Gestión de profesionales |
-| clinical-records-service | 8084 | clinical_records_db | Registros clínicos |
-| reports-service | 8085 | reports_db | Reportes estadísticos |
-| audits-service | 8086 | audits_db | Auditoría y logs |
+| Service | Puerto | Base de Datos | Responsabilidad | Estado |
+|---------|--------|---------------|-----------------|--------|
+| api-gateway | 8080 | — | Routing y autenticación | ⏳ Pendiente |
+| users-service | 8081 | users_db | Gestión de usuarios, pacientes, profesionales | ✅ Completado |
+| appointments-service | 8082 | appointments_db | Gestión de citas médicas | ⏳ Pendiente |
+| professionals-service | 8083 | professionals_db | Gestión de profesionales | ⏳ Pendiente |
+| clinical-records-service | 8084 | clinical_records_db | Registros clínicos | ⏳ Pendiente |
+| reports-service | 8085 | reports_db | Reportes estadísticos | ⏳ Pendiente |
+| audits-service | 8086 | audits_db | Auditoría y logs | ⏳ Pendiente |
 
 ---
 
@@ -52,21 +52,21 @@ Medical-Services-Network/
 │   └── ADR-007-javafx-for-desktop-ui.md
 │
 ├── services/                       # Microservicios
-│   ├── api-gateway/               # Puerto 8080
-│   ├── users-service/            # Puerto 8081
-│   ├── appointments-service/      # Puerto 8082
-│   ├── professionals-service/    # Puerto 8083
-│   ├── clinical-records-service/  # Puerto 8084
-│   ├── reports-service/          # Puerto 8085
-│   └── audits-service/           # Puerto 8086
+│   ├── api-gateway/               # Puerto 8080 — ⏳ Pendiente
+│   ├── users-service/            # Puerto 8081 — ✅ Completado
+│   ├── appointments-service/      # Puerto 8082 — ⏳ Pendiente
+│   ├── professionals-service/    # Puerto 8083 — ⏳ Pendiente
+│   ├── clinical-records-service/  # Puerto 8084 — ⏳ Pendiente
+│   ├── reports-service/          # Puerto 8085 — ⏳ Pendiente
+│   └── audits-service/           # Puerto 8086 — ⏳ Pendiente
 │
 ├── shared/                        # Librerías compartidas
 │   └── medical-common/           # Modelos, DTOs, excepciones
 │
-├── docs/                         # Documentación
-│   ├── architecture/
-│   ├── product/
-│   └── specs/
+├── docs/                         # Documentación general
+│   ├── architecture/             # C4 model, diagramas
+│   ├── product/                  # PRD, user stories, epics
+│   └── specs/                    # Especificaciones funcionales
 │
 └── README.md                      # Este archivo
 ```
@@ -125,12 +125,43 @@ Este proyecto sigue los principios SOLID (ADR-004) y utiliza patrones de diseño
 
 ---
 
+## Estado del Proyecto
+
+| Fase | Estado |
+|------|--------|
+| `users-service` — CRUD, búsqueda, roles, enriquecimiento | ✅ Completado |
+| `appointments-service` — Gestión de citas | ⏳ Pendiente |
+| `professionals-service` — Gestión de profesionales | ⏳ Pendiente |
+| `clinical-records-service` — Registros clínicos | ⏳ Pendiente |
+| `reports-service` — Reportes estadísticos | ⏳ Pendiente |
+| `audits-service` — Auditoría y logs | ⏳ Pendiente |
+| `api-gateway` — Routing y autenticación | ⏳ Pendiente |
+| Cliente JavaFX (Desktop) | ⏳ Pendiente |
+
+### users-service — Funcionalidades Implementadas
+
+El servicio de usuarios ya completado incluye:
+
+- **CRUD completo**: Crear, consultar, actualizar y desactivar usuarios
+- **4 roles diferenciados**: ADMIN, SCHEDULER, PATIENT, PROFESSIONAL
+- **Factory + Strategy**: Patrón de diseño para creación de usuarios por rol
+- **Enriquecimiento de respuesta**: Datos de Patient/Professional según el rol
+- **Búsqueda flexible**: Por username, email, rol, estado, y búsqueda combinada
+- **RabbitMQ**: Validación asíncrona de pacientes
+- **72 tests** (unitarios + integración), TDD estricto
+- **Spring Boot 3.5.14 + Java 21**
+
+---
+
 ## Próximos Pasos
 
-- [ ] Completar implementaciones de services
+- [ ] Implementar appointments-service
+- [ ] Implementar professionals-service
+- [ ] Implementar clinical-records-service
+- [ ] Implementar reports-service
+- [ ] Implementar audits-service
+- [ ] Implementar API Gateway con autenticación JWT
 - [ ] Implementar cliente JavaFX
-- [ ] Agregar autenticación con JWT
-- [ ] Configurar API Gateway
 
 ---
 
