@@ -1,6 +1,7 @@
 package com.medical.service;
 
 import com.medical.dto.CreateUserRequest;
+import com.medical.dto.LoginResponse;
 import com.medical.dto.UpdateUserRequest;
 import com.medical.dto.UserResponse;
 import com.medical.entities.User;
@@ -232,6 +233,27 @@ public class UserService {
 
     user.setActive(false);
     userRepository.save(user);
+  }
+
+  /**
+   * Authenticate user by username and password.
+   * Validates credentials using BCryptPasswordEncoder.
+   *
+   * @param username the username to authenticate
+   * @param password the raw password to validate
+   * @return LoginResponse with userId, username, and role on success
+   * @throws IllegalArgumentException if user not found or password doesn't match
+   */
+  @Transactional(readOnly = true)
+  public LoginResponse authenticate(String username, String password) {
+    User user = userRepository.findByUsername(username)
+        .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
+
+    if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+      throw new IllegalArgumentException("Invalid credentials");
+    }
+
+    return new LoginResponse(user.getId(), user.getUsername(), user.getRole().name());
   }
 
   /**
