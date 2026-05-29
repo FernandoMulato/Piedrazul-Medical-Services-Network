@@ -1,6 +1,7 @@
 package com.medical.integration;
 
 import com.medical.dto.CreateUserRequest;
+import com.medical.dto.LoginRequest;
 import com.medical.dto.UpdateUserRequest;
 import com.medical.enums.UserRole;
 
@@ -345,5 +346,59 @@ class UsersServiceIntegrationTest {
         url("/api/users/search/advanced?role=INVALID"), String.class);
 
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+  }
+
+  // ──────────────────────────────────────────────
+  // Login endpoint tests
+  // ──────────────────────────────────────────────
+
+  @Test
+  void shouldReturn200_whenLoginWithValidCredentials() {
+    // Given — a created user
+    String label = "loginok";
+    createUser(label);
+    String username = label + "." + suffix;
+
+    // When — login with correct password
+    LoginRequest loginReq = new LoginRequest(username, "Password1!");
+    ResponseEntity<String> response = restTemplate.postForEntity(
+        url("/api/users/auth/login"), loginReq, String.class);
+
+    // Then — 200 OK with user data
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    String body = response.getBody();
+    assertNotNull(body);
+    assertTrue(body.contains("\"userId\":"), "Response should contain userId");
+    assertTrue(body.contains("\"username\":\"" + username + "\""), "Response should contain username");
+    assertTrue(body.contains("\"role\":\"SCHEDULER\""), "Response should contain role");
+  }
+
+  @Test
+  void shouldReturn401_whenLoginWithInvalidPassword() {
+    // Given — a created user
+    String label = "loginbadpw";
+    createUser(label);
+    String username = label + "." + suffix;
+
+    // When — login with wrong password
+    LoginRequest loginReq = new LoginRequest(username, "wrong-password");
+    ResponseEntity<String> response = restTemplate.postForEntity(
+        url("/api/users/auth/login"), loginReq, String.class);
+
+    // Then — 401 Unauthorized
+    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+  }
+
+  @Test
+  void shouldReturn401_whenLoginWithUnknownUsername() {
+    // Given — no user with this username
+    LoginRequest loginReq = new LoginRequest("nonexistent_user_xyz", "anything");
+
+    // When — login
+    ResponseEntity<String> response = restTemplate.postForEntity(
+        url("/api/users/auth/login"), loginReq, String.class);
+
+    // Then — 401 Unauthorized
+    assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
   }
 }

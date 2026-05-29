@@ -1,6 +1,7 @@
 package com.medical.service;
 
 import com.medical.dto.CreateUserRequest;
+import com.medical.dto.LoginResponse;
 import com.medical.dto.UpdateUserRequest;
 import com.medical.dto.UserResponse;
 import com.medical.entities.User;
@@ -913,5 +914,66 @@ class UserServiceTest {
     assertEquals("orphanprof", response.getUsername());
     assertNull(response.getFirstName());
     assertNull(response.getSpecialty());
+  }
+
+  // ──────────────────────────────────────────────
+  // Phase: authenticate (login)
+  // ──────────────────────────────────────────────
+
+  @Test
+  void shouldAuthenticate_whenValidCredentials() {
+    // Given — a user with a BCrypt password hash
+    String rawPassword = "correct-password";
+    String encodedPassword = "$2a$10$encodedhash";
+    User user = User.builder()
+        .id(1L).username("jdoe").passwordHash(encodedPassword)
+        .email("jdoe@example.com").role(UserRole.PATIENT).active(true)
+        .build();
+
+    when(userRepository.findByUsername("jdoe")).thenReturn(Optional.of(user));
+    when(passwordEncoder.matches(rawPassword, encodedPassword)).thenReturn(true);
+
+    // When
+    LoginResponse response = userService.authenticate("jdoe", rawPassword);
+
+    // Then
+    assertNotNull(response);
+    assertEquals(1L, response.getUserId());
+    assertEquals("jdoe", response.getUsername());
+    assertEquals("PATIENT", response.getRole());
+    verify(userRepository).findByUsername("jdoe");
+    verify(passwordEncoder).matches(rawPassword, encodedPassword);
+  }
+
+  @Test
+  void shouldThrowException_whenInvalidPassword() {
+    // Given — a user exists but password doesn't match
+    String rawPassword = "wrong-password";
+    String encodedPassword = "$2a$10$encodedhash";
+    User user = User.builder()
+        .id(1L).username("jdoe").passwordHash(encodedPassword)
+        .email("jdoe@example.com").role(UserRole.PATIENT).active(true)
+        .build();
+
+    when(userRepository.findByUsername("jdoe")).thenReturn(Optional.of(user));
+    when(passwordEncoder.matches(rawPassword, encodedPassword)).thenReturn(false);
+
+    // When & Then
+    assertThrows(IllegalArgumentException.class,
+        () -> userService.authenticate("jdoe", rawPassword));
+    verify(userRepository).findByUsername("jdoe");
+    verify(passwordEncoder).matches(rawPassword, encodedPassword);
+  }
+
+  @Test
+  void shouldThrowException_whenAuthenticatingUnknownUser() {
+    // Given — no user with this username
+    when(userRepository.findByUsername("unknown")).thenReturn(Optional.empty());
+
+    // When & Then
+    assertThrows(IllegalArgumentException.class,
+        () -> userService.authenticate("unknown", "anything"));
+    verify(userRepository).findByUsername("unknown");
+    verify(passwordEncoder, never()).matches(anyString(), anyString());
   }
 }
