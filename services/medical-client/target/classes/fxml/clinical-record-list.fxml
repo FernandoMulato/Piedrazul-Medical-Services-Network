@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.medical.client.controller.ClinicalRecordListController">
+   
+   <HBox alignment="CENTER_LEFT" spacing="20.0">
+      <Label styleClass="title-label" text="Clinical Records" />
+      <HBox HBox.hgrow="ALWAYS" />
+      <Label text="Patient ID:" />
+      <TextField fx:id="patientIdSearch" promptText="Enter patient ID" />
+      <Button styleClass="button-primary" text="Search" onAction="#handleSearch" />
+   </HBox>
+   
+   <TableView fx:id="recordsTable" VBox.vgrow="ALWAYS">
+     <columns>
+       <TableColumn fx:id="idColumn" prefWidth="50.0" text="ID" />
+       <TableColumn fx:id="diagnosisColumn" prefWidth="250.0" text="Diagnosis" />
+       <TableColumn fx:id="treatmentColumn" prefWidth="250.0" text="Treatment" />
+     </columns>
+   </TableView>
+   
+   <Label fx:id="statusLabel" text="Ready" />
+</VBox>
