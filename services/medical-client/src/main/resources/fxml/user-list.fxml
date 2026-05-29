@@ -9,18 +9,23 @@
 
 <VBox spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.medical.client.controller.UserListController">
    
-   <HBox alignment="CENTER_LEFT" spacing="20.0">
+   <HBox alignment="CENTER_LEFT" spacing="10.0">
       <Label styleClass="title-label" text="Users Management" />
       <HBox HBox.hgrow="ALWAYS" />
+      <Button styleClass="button-success" text="+ New User" onAction="#handleCreateUser" />
+      <Button styleClass="button-warning" text="Edit" onAction="#handleEditUser" />
+      <Button styleClass="button-danger" text="Deactivate" onAction="#handleDeactivateUser" />
       <Button styleClass="button-primary" text="Refresh" onAction="#loadUsers" />
    </HBox>
    
    <TableView fx:id="userTable" VBox.vgrow="ALWAYS">
      <columns>
        <TableColumn fx:id="idColumn" prefWidth="50.0" text="ID" />
-       <TableColumn fx:id="usernameColumn" prefWidth="150.0" text="Username" />
-       <TableColumn fx:id="roleColumn" prefWidth="120.0" text="Role" />
-       <TableColumn fx:id="activeColumn" prefWidth="100.0" text="Active" />
+       <TableColumn fx:id="usernameColumn" prefWidth="120.0" text="Username" />
+       <TableColumn fx:id="emailColumn" prefWidth="180.0" text="Email" />
+       <TableColumn fx:id="nameColumn" prefWidth="150.0" text="Name" />
+       <TableColumn fx:id="roleColumn" prefWidth="100.0" text="Role" />
+       <TableColumn fx:id="activeColumn" prefWidth="70.0" text="Active" />
      </columns>
    </TableView>
    

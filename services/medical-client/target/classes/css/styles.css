@@ -97,3 +97,78 @@
     -fx-background-color: #00b4d8;
     -fx-text-fill: white;
 }
+
+.table-view .table-cell {
+    -fx-text-fill: #e9ecef;
+}
+
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: white;
+}
+
+/* Success Button (Create/New) */
+.button-success {
+    -fx-background-color: #2d6a4f;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+}
+
+.button-success:hover {
+    -fx-background-color: #40916c;
+}
+
+/* Danger Button (Delete/Deactivate/Cancel) */
+.button-danger {
+    -fx-background-color: #9d0208;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+}
+
+.button-danger:hover {
+    -fx-background-color: #d00000;
+}
+
+/* Warning Button (Edit/Reschedule) */
+.button-warning {
+    -fx-background-color: #e85d04;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+}
+
+.button-warning:hover {
+    -fx-background-color: #f48c06;
+}
+
+/* Dialog Pane Dark Theme */
+.dialog-pane {
+    -fx-background-color: #1a1a2e;
+}
+
+.dialog-pane .content {
+    -fx-background-color: #1a1a2e;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #0f3460;
+}
+
+.dialog-pane .button-bar .btn {
+    -fx-background-color: #0f3460;
+    -fx-text-fill: white;
+}
+
+.dialog-pane .label {
+    -fx-text-fill: #e9ecef;
+}

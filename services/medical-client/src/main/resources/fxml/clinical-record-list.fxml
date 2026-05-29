@@ -10,9 +10,15 @@
 
 <VBox spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.medical.client.controller.ClinicalRecordListController">
    
-   <HBox alignment="CENTER_LEFT" spacing="20.0">
+   <HBox alignment="CENTER_LEFT" spacing="10.0">
       <Label styleClass="title-label" text="Clinical Records" />
       <HBox HBox.hgrow="ALWAYS" />
+      <Button styleClass="button-success" text="+ New Record" onAction="#handleCreateRecord" />
+      <Button styleClass="button-warning" text="Edit" onAction="#handleEditRecord" />
+      <Button styleClass="button-danger" text="Delete" onAction="#handleDeleteRecord" />
+   </HBox>
+
+   <HBox alignment="CENTER_LEFT" spacing="10.0">
       <Label text="Patient ID:" />
       <TextField fx:id="patientIdSearch" promptText="Enter patient ID" />
       <Button styleClass="button-primary" text="Search" onAction="#handleSearch" />
@@ -21,8 +27,11 @@
    <TableView fx:id="recordsTable" VBox.vgrow="ALWAYS">
      <columns>
        <TableColumn fx:id="idColumn" prefWidth="50.0" text="ID" />
-       <TableColumn fx:id="diagnosisColumn" prefWidth="250.0" text="Diagnosis" />
-       <TableColumn fx:id="treatmentColumn" prefWidth="250.0" text="Treatment" />
+       <TableColumn fx:id="patientIdColumn" prefWidth="80.0" text="Patient ID" />
+       <TableColumn fx:id="professionalIdColumn" prefWidth="80.0" text="Prof. ID" />
+       <TableColumn fx:id="diagnosisColumn" prefWidth="200.0" text="Diagnosis" />
+       <TableColumn fx:id="treatmentColumn" prefWidth="200.0" text="Treatment" />
+       <TableColumn fx:id="dateColumn" prefWidth="100.0" text="Date" />
      </columns>
    </TableView>
    

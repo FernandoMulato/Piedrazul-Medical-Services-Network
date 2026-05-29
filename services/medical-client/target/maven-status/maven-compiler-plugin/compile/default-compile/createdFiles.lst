@@ -8,6 +8,7 @@ com/medical/client/controller/AppointmentListController.class
 com/medical/client/model/CreateUserRequest.class
 com/medical/client/controller/LoginController.class
 com/medical/client/service/HttpClientService.class
+com/medical/client/util/DialogHelper.class
 com/medical/client/model/UserResponse.class
 com/medical/client/event/ClinicEventBus.class
 com/medical/client/model/CreateClinicalRecordRequest.class

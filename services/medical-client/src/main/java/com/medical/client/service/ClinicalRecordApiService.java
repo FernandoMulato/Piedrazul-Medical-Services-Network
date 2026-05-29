@@ -15,6 +15,10 @@ public class ClinicalRecordApiService {
         return httpClient.getList(ApiConfig.CLINICAL_RECORDS_BASE_URL + "/patient/" + patientId, ClinicalRecordResponse.class);
     }
 
+    public ClinicalRecordResponse getById(Long id) throws Exception {
+        return httpClient.get(ApiConfig.CLINICAL_RECORDS_BASE_URL + "/" + id, ClinicalRecordResponse.class);
+    }
+
     public ClinicalRecordResponse create(CreateClinicalRecordRequest request) throws Exception {
         return httpClient.post(ApiConfig.CLINICAL_RECORDS_BASE_URL, request, ClinicalRecordResponse.class);
     }
