@@ -19,15 +19,15 @@
    </HBox>
 
    <HBox alignment="CENTER_LEFT" spacing="10.0">
-      <Label text="Patient ID:" />
-      <TextField fx:id="patientIdSearch" promptText="Enter patient ID" />
+      <Label text="Patient Document:" />
+      <TextField fx:id="patientDocSearch" promptText="Enter patient document" />
       <Button styleClass="button-primary" text="Search" onAction="#handleSearch" />
    </HBox>
    
    <TableView fx:id="recordsTable" VBox.vgrow="ALWAYS">
      <columns>
        <TableColumn fx:id="idColumn" prefWidth="50.0" text="ID" />
-       <TableColumn fx:id="patientIdColumn" prefWidth="80.0" text="Patient ID" />
+       <TableColumn fx:id="patientDocColumn" prefWidth="120.0" text="Patient Document" />
        <TableColumn fx:id="professionalIdColumn" prefWidth="80.0" text="Prof. ID" />
        <TableColumn fx:id="diagnosisColumn" prefWidth="200.0" text="Diagnosis" />
        <TableColumn fx:id="treatmentColumn" prefWidth="200.0" text="Treatment" />

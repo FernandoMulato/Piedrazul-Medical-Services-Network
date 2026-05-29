@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CreateClinicalRecordRequest {
 
-    private Long patientId;
+    private String patientDocument;
     private Long professionalId;
     private String professionalType;
     private String diagnosis;
@@ -24,7 +24,7 @@ public class CreateClinicalRecordRequest {
     }
 
     // Getters
-    public Long getPatientId() { return patientId; }
+    public String getPatientDocument() { return patientDocument; }
     public Long getProfessionalId() { return professionalId; }
     public String getProfessionalType() { return professionalType; }
     public String getDiagnosis() { return diagnosis; }
@@ -33,7 +33,7 @@ public class CreateClinicalRecordRequest {
     public LocalDate getConsultationDate() { return consultationDate; }
 
     // Setters
-    public void setPatientId(Long patientId) { this.patientId = patientId; }
+    public void setPatientDocument(String patientDocument) { this.patientDocument = patientDocument; }
     public void setProfessionalId(Long professionalId) { this.professionalId = professionalId; }
     public void setProfessionalType(String professionalType) { this.professionalType = professionalType; }
     public void setDiagnosis(String diagnosis) { this.diagnosis = diagnosis; }

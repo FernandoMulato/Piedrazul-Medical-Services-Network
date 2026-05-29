@@ -11,8 +11,8 @@ public class ClinicalRecordApiService {
 
     private final HttpClientService httpClient = HttpClientService.getInstance();
 
-    public List<ClinicalRecordResponse> getByPatient(Long patientId) throws Exception {
-        return httpClient.getList(ApiConfig.CLINICAL_RECORDS_BASE_URL + "/patient/" + patientId, ClinicalRecordResponse.class);
+    public List<ClinicalRecordResponse> getByPatient(String patientDocument) throws Exception {
+        return httpClient.getList(ApiConfig.CLINICAL_RECORDS_BASE_URL + "/patient/" + patientDocument, ClinicalRecordResponse.class);
     }
 
     public ClinicalRecordResponse getById(Long id) throws Exception {

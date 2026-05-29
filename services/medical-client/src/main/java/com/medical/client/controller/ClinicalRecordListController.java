@@ -20,10 +20,10 @@ import java.util.Optional;
 
 public class ClinicalRecordListController {
 
-    @FXML private TextField patientIdSearch;
+    @FXML private TextField patientDocSearch;
     @FXML private TableView<ClinicalRecordResponse> recordsTable;
     @FXML private TableColumn<ClinicalRecordResponse, Long> idColumn;
-    @FXML private TableColumn<ClinicalRecordResponse, Long> patientIdColumn;
+    @FXML private TableColumn<ClinicalRecordResponse, String> patientDocColumn;
     @FXML private TableColumn<ClinicalRecordResponse, Long> professionalIdColumn;
     @FXML private TableColumn<ClinicalRecordResponse, String> diagnosisColumn;
     @FXML private TableColumn<ClinicalRecordResponse, String> treatmentColumn;
@@ -32,12 +32,12 @@ public class ClinicalRecordListController {
 
     private final ClinicalRecordApiService service = new ClinicalRecordApiService();
     private final ObservableList<ClinicalRecordResponse> recordsList = FXCollections.observableArrayList();
-    private Long currentPatientId = null;
+    private String currentPatientDocument = null;
 
     @FXML
     public void initialize() {
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        patientIdColumn.setCellValueFactory(new PropertyValueFactory<>("patientId"));
+        patientDocColumn.setCellValueFactory(new PropertyValueFactory<>("patientDocument"));
         professionalIdColumn.setCellValueFactory(new PropertyValueFactory<>("professionalId"));
         diagnosisColumn.setCellValueFactory(new PropertyValueFactory<>("diagnosis"));
         treatmentColumn.setCellValueFactory(new PropertyValueFactory<>("treatment"));
@@ -48,28 +48,22 @@ public class ClinicalRecordListController {
 
     @FXML
     public void handleSearch() {
-        String patientIdStr = patientIdSearch.getText();
-        if (patientIdStr == null || patientIdStr.isBlank()) {
-            AlertHelper.showError("Validation", "Please enter a Patient ID");
+        String doc = patientDocSearch.getText();
+        if (doc == null || doc.isBlank()) {
+            AlertHelper.showError("Validation", "Please enter a Patient Document");
             return;
         }
-
-        try {
-            Long patientId = Long.parseLong(patientIdStr);
-            loadRecords(patientId);
-        } catch (NumberFormatException e) {
-            AlertHelper.showError("Validation", "Patient ID must be a valid number");
-        }
+        loadRecords(doc.trim());
     }
 
-    private void loadRecords(Long patientId) {
+    private void loadRecords(String patientDocument) {
         statusLabel.setText("Loading records...");
         new Thread(() -> {
             try {
-                List<ClinicalRecordResponse> records = service.getByPatient(patientId);
+                List<ClinicalRecordResponse> records = service.getByPatient(patientDocument);
                 Platform.runLater(() -> {
                     recordsList.setAll(records);
-                    currentPatientId = patientId;
+                    currentPatientDocument = patientDocument;
                     statusLabel.setText("Records loaded: " + records.size());
                 });
             } catch (Exception e) {
@@ -88,7 +82,7 @@ public class ClinicalRecordListController {
 
         GridPane grid = DialogHelper.createFormGrid();
 
-        TextField patientIdField = DialogHelper.addTextField(grid, 0, "Patient ID *", "Patient ID", currentPatientId != null ? currentPatientId.toString() : "");
+        TextField patientDocField = DialogHelper.addTextField(grid, 0, "Patient Document *", "Document number", currentPatientDocument != null ? currentPatientDocument : "");
         TextField profIdField = DialogHelper.addTextField(grid, 1, "Professional ID *", "Professional ID");
         TextField profTypeField = DialogHelper.addTextField(grid, 2, "Professional Type *", "GENERAL_PRACTITIONER, SPECIALIST");
         DatePicker datePicker = DialogHelper.addDatePicker(grid, 3, "Consultation Date *", LocalDate.now());
@@ -101,8 +95,8 @@ public class ClinicalRecordListController {
         dialog.setResultConverter(btn -> {
             if (btn == ButtonType.OK) {
                 CreateClinicalRecordRequest req = new CreateClinicalRecordRequest();
+                req.setPatientDocument(patientDocField.getText().trim());
                 try {
-                    req.setPatientId(Long.parseLong(patientIdField.getText().trim()));
                     req.setProfessionalId(Long.parseLong(profIdField.getText().trim()));
                 } catch (NumberFormatException ignored) {}
                 req.setProfessionalType(DialogHelper.getOrNull(profTypeField.getText()));
@@ -117,9 +111,9 @@ public class ClinicalRecordListController {
 
         Optional<CreateClinicalRecordRequest> result = dialog.showAndWait();
         result.ifPresent(req -> {
-            if (req.getPatientId() == null || req.getProfessionalId() == null || req.getProfessionalType() == null ||
+            if (req.getPatientDocument() == null || req.getPatientDocument().isBlank() || req.getProfessionalId() == null || req.getProfessionalType() == null ||
                 req.getConsultationDate() == null || req.getDiagnosis() == null || req.getTreatment() == null) {
-                AlertHelper.showError("Validation", "Patient ID, Professional ID, Type, Date, Diagnosis, and Treatment are required.");
+                AlertHelper.showError("Validation", "Patient Document, Professional ID, Type, Date, Diagnosis, and Treatment are required.");
                 return;
             }
             statusLabel.setText("Creating record...");
@@ -127,11 +121,11 @@ public class ClinicalRecordListController {
                 try {
                     ClinicalRecordResponse created = service.create(req);
                     Platform.runLater(() -> {
-                        if (currentPatientId != null && currentPatientId.equals(created.getPatientId())) {
-                            loadRecords(currentPatientId);
+                        if (currentPatientDocument != null && currentPatientDocument.equals(created.getPatientDocument())) {
+                            loadRecords(currentPatientDocument);
                         } else {
-                            patientIdSearch.setText(created.getPatientId().toString());
-                            loadRecords(created.getPatientId());
+                            patientDocSearch.setText(created.getPatientDocument());
+                            loadRecords(created.getPatientDocument());
                         }
                         AlertHelper.showSuccess("Success", "Clinical record created with ID: " + created.getId());
                     });
@@ -182,8 +176,8 @@ public class ClinicalRecordListController {
                 try {
                     service.update(selected.getId(), req);
                     Platform.runLater(() -> {
-                        if (currentPatientId != null) {
-                            loadRecords(currentPatientId);
+                        if (currentPatientDocument != null) {
+                            loadRecords(currentPatientDocument);
                         }
                         AlertHelper.showSuccess("Success", "Clinical record updated successfully.");
                     });
@@ -214,8 +208,8 @@ public class ClinicalRecordListController {
             try {
                 service.delete(selected.getId());
                 Platform.runLater(() -> {
-                    if (currentPatientId != null) {
-                        loadRecords(currentPatientId);
+                    if (currentPatientDocument != null) {
+                        loadRecords(currentPatientDocument);
                     }
                     AlertHelper.showSuccess("Success", "Clinical record deleted successfully.");
                 });
