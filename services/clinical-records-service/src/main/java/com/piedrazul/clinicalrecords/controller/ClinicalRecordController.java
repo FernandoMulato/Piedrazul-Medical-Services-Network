@@ -10,8 +10,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST Controller for clinical records management.
+ * Routes: /api/clinical-records/**
+ *
+ * @author Henry Fernando Mulato Llanten <henrymulato@unicauca.edu.co>
+ */
 @RestController
-@RequestMapping("/api/v1/clinical-records")
+@RequestMapping("/api/clinical-records")
 @RequiredArgsConstructor
 public class ClinicalRecordController {
 
