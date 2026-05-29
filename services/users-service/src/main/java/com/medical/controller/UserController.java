@@ -1,8 +1,6 @@
 package com.medical.controller;
 
 import com.medical.dto.CreateUserRequest;
-import com.medical.dto.LoginRequest;
-import com.medical.dto.LoginResponse;
 import com.medical.dto.UpdateUserRequest;
 import com.medical.dto.UserResponse;
 import com.medical.enums.UserRole;
@@ -77,21 +75,6 @@ public class UserController {
   public ResponseEntity<Void> deactivateUser(@PathVariable Long id) {
     userService.deactivateUser(id);
     return ResponseEntity.noContent().build();
-  }
-
-  /**
-   * Login: authenticate user credentials.
-   * POST /api/users/auth/login
-   * Returns 200 with userId/username/role on success, 401 on invalid credentials.
-   */
-  @PostMapping("/auth/login")
-  public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
-    try {
-      LoginResponse response = userService.authenticate(request.getUsername(), request.getPassword());
-      return ResponseEntity.ok(response);
-    } catch (IllegalArgumentException e) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-    }
   }
 
   // ──────────────────────────────────────────────
